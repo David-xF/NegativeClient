@@ -43,13 +43,9 @@ void init() {
     memoryInitialize();
 }
 
-void test(char b) {
-    mc::Options* options = mc::Minecraft::getInstance()->options;
-}
-
 char n = 0;
 DECL_FUNCTION(void, RenderHitbox, void* renderer, const mc_boost::shared_ptr<mc::Entity>& ref, uint32_t unk, float x, float y, float z, float a, float b) {
-    ((ESP*) staticESP)->getModule()->getState() ? ESP::draw(renderer, ref, unk, x, y, z, a, b) : test(n);
+    ESP::draw(renderer, ref, unk, x, y, z, a, b);
 }
 
 DECL_HOOK(onFrameInGame) {
