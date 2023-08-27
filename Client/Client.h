@@ -96,8 +96,9 @@ public:
         //xf::GUI::DrawHelper::DisplayBox2D(x, y, sizeX, sizeY, bgColor, 0xFF);
         xf::GUI::DrawHelper::drawRoundedBox(x + (sizeX / 2), y + (sizeY / 2), sizeX + outlineWidth, sizeY + outlineWidth, angle, 0xFFFFFF, 0xFF);
         xf::GUI::DrawHelper::drawRoundedBox(x + (sizeX / 2), y + (sizeY / 2), sizeX, sizeY, angle, bgColor, 0xFF);
-        float cNameWidth = font->width(clientName) / 2;
-        xf::GUI::DrawHelper::DisplayText(font, clientName, 1, (sizeX / 2) + x - cNameWidth, y + 5);
+        const wchar_t* dName = getCurrentModule(mod)->getName();
+        float cNameWidth = font->width(dName) / 2;
+        xf::GUI::DrawHelper::DisplayText(font, dName, 1, (sizeX / 2) + x - cNameWidth, y + 5);
         
         auto drawMod = [&](Module* mod, int index, int _selectIndex) {
             float yOffset = index * mc::toFloat(FONT_CHAR_HEIGHT + space);
@@ -124,6 +125,7 @@ public:
         }
     }
 
+    // By InuPong
     void fpsCounter() {
         static int count = 0;
         static uint64_t basetime = 0;

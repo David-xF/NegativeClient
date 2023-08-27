@@ -116,7 +116,7 @@ int c_main(void*) {
         mc_printf(L"[Credits] Made by david.xf");
         mc_printf(L"[Credits] Discord: https://discord.gg/xumaYBBhJv");
         mc_printf(L"[Credits] Client Name: denizdenizdenizdeniz");
-        mc_printf(L"[Credits] Extra Credits: Nessiemax, Syoch, Chadderz, Inupong, BullyWiiPlaza");
+        mc_printf(L"[Credits] Extra Credits: Miku666, Syoch, Chadderz, Inupong, BullyWiiPlaza");
     });
     MiscPage->addModuleToVector(CreditsModule);
     
@@ -152,7 +152,7 @@ int c_main(void*) {
 
     Module* changeNNID = new Module(L"Change NNID", Module::Type::BUTTON);
     changeNNID->setEvents(nullptr, nullptr, [](Module* mod) {
-        wchar_t* nnidAddr = ((wchar_t*) ((uint32_t) code::Mem(0x104CCB18).as<wchar_t*>() + 0x50)); // Nessiemax
+        wchar_t* nnidAddr = ((wchar_t*) ((uint32_t) code::Mem(0x104CCB18).as<wchar_t*>() + 0x50)); // Miku666
         mc::CInput::GetInput()->RequestKeyboard(L"", nnidAddr, 0, 16, [](void* data, bool b) {
             wchar_t temp[17];
             mc::CInput::GetInput()->GetText(temp, 17);
