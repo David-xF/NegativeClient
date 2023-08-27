@@ -17,6 +17,9 @@ public:
     }
 
     static void draw(void* renderer, const mc_boost::shared_ptr<mc::Entity>& ref, uint32_t unk, float x, float y, float z, float a, float b) {
+        ESP* esp = (ESP*) staticESP;
+        if (!esp->getModule()->getState()) return; 
+        
         mc::Player* player = nullptr;
         for (mc_boost::shared_ptr<mc::Player>& _player : ref->lvl->players) {
             if (_player.ptr == ref.ptr) {
