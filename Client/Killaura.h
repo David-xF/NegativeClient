@@ -13,6 +13,9 @@ public:
         _module = new Module(L"Kill Aura", Module::Type::MODULE);
         staticKillAura = this;
 
+        _module->addModuleToSettings((new Module(L"Target Entities", Module::Type::MODULE))->toggleState());
+        _module->addModuleToSettings((new Module(L"Target Players", Module::Type::MODULE))->toggleState());
+
         playerForInfoDisplay = nullptr;
         maxDistance = 7.0f;
     }

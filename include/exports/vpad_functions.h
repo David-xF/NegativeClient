@@ -88,6 +88,45 @@ EXPORT_DECL(void, VPADRead, int chan, VPADData *buffer, uint32_t buffer_size, in
         isActive = false; \
     }
 
+#define START_TIMED_BUTTONCHECK(ifCheck, action, btnName, minTime, cps)          \
+    VPADData vpadData;                                                           \
+    int vpadError;                                                               \
+    VPADRead(0, &vpadData, 1, &vpadError);                                       \
+    uint32_t btnName = vpadData.btns_d | vpadData.btns_h;                        \
+    static uint64_t lastClickTime = 0;                                           \
+    static uint64_t lastTime = 0;                                                \
+    uint64_t mTime = minTime;                                                    \
+    uint64_t clickTime = 1000 / cps;                                             \
+    uint64_t currentTime = mc::System::processTimeInMilliSecsu64();              \
+    static bool wasBtnPressed = false;                                           \
+    if (ifCheck) {                                                               \
+        if     (!(mTime     > (currentTime -      lastTime) && wasBtnPressed)) { \
+            if (!(clickTime > (currentTime - lastClickTime) && wasBtnPressed)) { \
+                action;                                                          \
+                wasBtnPressed = true;                                            \
+                lastClickTime = currentTime;                                     \
+            }                                                                    \
+        }                                                                        \
+    }
+
+#define ADD_TIMED_BUTTONCHECK(ifCheck, action)                                   \
+    else if (ifCheck) {                                                          \
+        if     (!(mTime     > (currentTime -      lastTime) && wasBtnPressed)) { \
+            if (!(clickTime > (currentTime - lastClickTime) && wasBtnPressed)) { \
+                action;                                                          \
+                wasBtnPressed = true;                                            \
+                lastClickTime = currentTime;                                     \
+            }                                                                    \
+        }                                                                        \
+    }
+
+#define END_TIMED_BUTTONCHECK(action) \
+    else {                            \
+        wasBtnPressed = false;        \
+        action;                       \
+        lastTime = currentTime;       \
+    }
+
 void InitVPadFunctionPointers(void) {
     unsigned int *funcPointer = 0;
     uint32_t vpad_handle;

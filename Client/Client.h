@@ -71,11 +71,32 @@ public:
             return;
         }
 
-        START_BUTTONCHECK(buttons & VPAD_BUTTON_DOWN, mod->down(), buttons)
-        ADD_BUTTONCHECK(buttons & VPAD_BUTTON_UP, mod->up())
-        ADD_BUTTONCHECK(buttons & VPAD_BUTTON_RIGHT, mod->right())
-        ADD_BUTTONCHECK(buttons & VPAD_BUTTON_LEFT, mod->left())
-        END_BUTTONCHECK()
+        auto openSettings = [&](bool isEnd, uint64_t &t) {
+            static uint32_t lastBtnPressed = 0;
+            Module* currMod = getCurrentModule(mod);
+            if (currMod->getPageVector()[currMod->selctedInt()]->hasSettings()) {
+                if (lastBtnPressed == 1 && isEnd) {
+                    lastBtnPressed = 0;
+                    mod->right();
+                } else if (lastBtnPressed == 0 && !isEnd) {
+                    lastBtnPressed = 1;
+                } else if (lastBtnPressed == 1 && !isEnd) {
+                    currMod->openSettings();
+                    t = mc::System::processTimeInMilliSecsu64();
+                    lastBtnPressed = 2;
+                } else if (lastBtnPressed == 2 && isEnd) {
+                    lastBtnPressed = 0;
+                }
+            } else if (!isEnd) {
+                mod->right();
+            }
+        };
+
+        START_TIMED_BUTTONCHECK(buttons & VPAD_BUTTON_DOWN, mod->down(), buttons, 300, 20)
+        ADD_TIMED_BUTTONCHECK(buttons & VPAD_BUTTON_UP,     mod->up())
+        ADD_TIMED_BUTTONCHECK(buttons & VPAD_BUTTON_RIGHT,  openSettings(false, lastClickTime))
+        ADD_TIMED_BUTTONCHECK(buttons & VPAD_BUTTON_LEFT,   mod->left())
+        END_TIMED_BUTTONCHECK(openSettings(true, lastClickTime))
 
         const float x = 25;
         const float y = 25;

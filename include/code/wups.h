@@ -52,7 +52,7 @@ void* safeInstructions(uint32_t startFunction, uint32_t nextFunction) {
 #define DECL_HOOK(func) \
     void hook_##func() 
 
-void _TEST(uint32_t addr, uint32_t funcPtr, int offset) {
+void HOOK_INIT(uint32_t addr, uint32_t funcPtr, int offset) {
     uint32_t hookPtr = (uint32_t) &instructionBuffer[__test_index];
     uint32_t fFuncPtr = (uint32_t) mc::PointerFix::Fix((void(*)()) funcPtr);
     writeMem(addr, branchTo(addr, (void*) hookPtr, false));
@@ -66,7 +66,7 @@ void _TEST(uint32_t addr, uint32_t funcPtr, int offset) {
 }
 
 #define HOOK(addr, func, offset) \
-    _TEST(addr, (uint32_t) hook_##func, offset);
+    HOOK_INIT(addr, (uint32_t) hook_##func, offset);
     
 #define REPLACE(sAddr, nAddr, func) REPLACE_EX(sAddr, nAddr, real_##func, my_##func, func, real_instructions)
 #define REPLACE_EX(sAddr, nAddr, original_func, replace_func, func, ins_list) \
@@ -91,7 +91,7 @@ void _TEST(uint32_t addr, uint32_t funcPtr, int offset) {
 
 // Found in WUPS then TCPGecko (Expanded by david.xf)
 #define DECL_FUNCTION(res, name, ...)                                \
-    __attribute__((section(".text"))) res real_##name(__VA_ARGS__) { \
+    res real_##name(__VA_ARGS__) {                                   \
         asm volatile("_" #name "Start:");                            \
         asm volatile("stwu 1, -0x100(1)");                           \
         asm volatile("mflr 0");                                      \

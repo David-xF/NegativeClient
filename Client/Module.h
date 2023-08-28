@@ -20,7 +20,6 @@ public:
         moduleType = type;
         pageVector = xf::Vector<Module*>();
         isEnabled = false;
-        settings = nullptr;
 
         onEnable = nullptr;
         onDisable = nullptr;
@@ -47,8 +46,9 @@ public:
         return pageVector;
     }
 
-    void toggleState() {
+    Module* toggleState() {
         setState(!isEnabled);
+        return this;
     }
 
     void setState(bool state) {
@@ -59,6 +59,10 @@ public:
         isEnabled = state;
         if (onEnable == nullptr || onDisable == nullptr) return;
         isEnabled ? onEnable(this) : onDisable(this); 
+    }
+
+    void addModuleToSettings(Module* _settings) {
+        pageVector.push_back(_settings);
     }
 
     bool getState() {
@@ -121,6 +125,22 @@ public:
         pageIndex = -1;
     }
 
+    bool hasSettings() {
+        if (getType() == Type::MODULE) {
+            if (pageVector.getSize() > 0) return true;
+            return false;
+        } else {
+            return false;
+        }
+    }
+
+    void openSettings() {
+        if (pageVector[selectIndex]->getPageVector().getSize() > 0) {
+            pageIndex = selectIndex;
+            pageVector[pageIndex]->reset();
+        }
+    }
+
     void right() {
         if (pageIndex == -1) {
             if (pageVector[selectIndex]->getType() == Type::PAGE) {
@@ -161,7 +181,6 @@ public:
 
 private:
     xf::Vector<Module*> pageVector;
-    Module* settings;
     wchar_t* moduleName;
     Type moduleType;
     bool isEnabled;
