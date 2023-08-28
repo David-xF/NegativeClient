@@ -71,7 +71,7 @@ public:
             return;
         }
 
-        auto openSettings = [&](bool isEnd, uint64_t &t) {
+        auto openSettings = [&](bool isEnd, uint64_t &t1, uint64_t &t2) {
             static uint32_t lastBtnPressed = 0;
             Module* currMod = getCurrentModule(mod);
             if (currMod->getPageVector()[currMod->selctedInt()]->hasSettings()) {
@@ -82,7 +82,8 @@ public:
                     lastBtnPressed = 1;
                 } else if (lastBtnPressed == 1 && !isEnd) {
                     currMod->openSettings();
-                    t = mc::System::processTimeInMilliSecsu64();
+                    t1 = mc::System::processTimeInMilliSecsu64();
+                    t2 = mc::System::processTimeInMilliSecsu64();
                     lastBtnPressed = 2;
                 } else if (lastBtnPressed == 2 && isEnd) {
                     lastBtnPressed = 0;
@@ -94,9 +95,9 @@ public:
 
         START_TIMED_BUTTONCHECK(buttons & VPAD_BUTTON_DOWN, mod->down(), buttons, 300, 20)
         ADD_TIMED_BUTTONCHECK(buttons & VPAD_BUTTON_UP,     mod->up())
-        ADD_TIMED_BUTTONCHECK(buttons & VPAD_BUTTON_RIGHT,  openSettings(false, lastClickTime))
+        ADD_TIMED_BUTTONCHECK(buttons & VPAD_BUTTON_RIGHT,  openSettings(false, lastClickTime, lastTime))
         ADD_TIMED_BUTTONCHECK(buttons & VPAD_BUTTON_LEFT,   mod->left())
-        END_TIMED_BUTTONCHECK(openSettings(true, lastClickTime))
+        END_TIMED_BUTTONCHECK(openSettings(true, lastClickTime, lastTime))
 
         const float x = 25;
         const float y = 25;
@@ -129,6 +130,13 @@ public:
                 xf::GUI::DrawHelper::DisplayBox2D(
                     x + markerWidth, y + 23 + yOffset - space, sizeX - markerWidth, FONT_CHAR_HEIGHT + space, 0xFFFFFF, 0x20
                 );
+            }
+
+            if (mod->getPageVector().getSize() > 0) {
+                mstd::wstring indicator;
+                if (mod->hasSettings()) indicator = L"[S]";
+                else                    indicator = L"[+]";
+                xf::GUI::DrawHelper::DisplayText(font, indicator, 1, x + sizeX - font->width(indicator) - 4, y + 23 + yOffset, 0xFFFFFFFF, false);
             }
 
             xf::GUI::DrawHelper::DisplayText(font, mod->getName(), 1, x + textSpace + markerWidth, y + 23 + yOffset, 0xFFFFFFFF, false);  
