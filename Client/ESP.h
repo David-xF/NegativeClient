@@ -22,7 +22,7 @@ public:
         _module->addModuleToSettings((new Module(L"Target Entities", Module::Type::MODULE))->toggleState());
         _module->addModuleToSettings((new Module(L"Target Players", Module::Type::MODULE))->toggleState());
         _module->addModuleToSettings((new Module(L"Player Color", Module::Type::MODULE))->toggleState());
-        Module* setColModule = new Module(L"Set Color", Module::Type::BUTTON);
+        Module* setColModule = new Module(L"Set Color [ARGB]", Module::Type::BUTTON);
         setColModule->setEvents(nullptr, nullptr, [](Module* origin) {
             ESP* esp = (ESP*) staticESP;
             mc::CInput::GetInput()->RequestKeyboard(L"", xf::String<wchar_t>::intToHexStr(esp->getColor()).c_str(), 0, 8, [](void* data, bool unk) {
