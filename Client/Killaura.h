@@ -39,7 +39,19 @@ public:
                 }
             }
 
-            if (nearestEntity != nullptr) {
+            bool wasPlayer = false;
+            for (mc_boost::shared_ptr<mc::Player>& player : lPlayer->lvl->players) {
+                if (player.ptr == nearestEntity) {            
+                    wasPlayer = true;
+                    break;
+                }
+            }
+
+            bool canAttack = false;
+            if (wasPlayer && killAura->canTargetPlayers())   canAttack = true;
+            if (!wasPlayer && killAura->canTargetEntities()) canAttack = true;
+
+            if (nearestEntity != nullptr && canAttack) {
                 if (nearestEntity->position.distance(lPlayer->position) > killAura->getMaxDist()) return;
 
                 mc_boost::shared_ptr<mc::Packet> packet = new mc::ServerboundInteractPacket(nearestEntity);
@@ -48,16 +60,8 @@ public:
                 lPlayer->swing();
             }
 
-            bool wasPlayer = false;
-            for (mc_boost::shared_ptr<mc::Player>& player : lPlayer->lvl->players) {
-                if (player.ptr == nearestEntity) {
-                    killAura->setPlayer(player.ptr);            
-                    wasPlayer = true;
-                    break;
-                }
-            }
-
             if (!wasPlayer) killAura->setPlayer(nullptr);
+            else            killAura->setPlayer((mc::Player*) nearestEntity);
         }
     }
 
@@ -142,6 +146,14 @@ public:
 
     Module* getModule() {
         return _module;
+    }
+
+    bool canTargetEntities() {
+        return _module->getPageVector()[0]->getState();
+    }
+
+    bool canTargetPlayers() {
+        return _module->getPageVector()[1]->getState();
     }
 
 private:

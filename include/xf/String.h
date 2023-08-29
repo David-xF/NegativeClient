@@ -38,15 +38,16 @@ namespace xf {
         }
 
         static String<T> intToStr(int input) {
-            wchar_t* t = new wchar_t[0x60];
-            mc_swprintf(t, 0x60, L"%d", input);
+            wchar_t* t = new wchar_t[0x30];
+            mc_swprintf(t, 0x30, L"%d", input);
             if      (sizeof(T) == sizeof(wchar_t)) return (T*) t;
             else if (sizeof(T) == sizeof(char))     return (T*) wcharToChar(t);
         }
         
-        static String<T> intToHexStr(uint32_t input) {
-            wchar_t* t = new wchar_t[0x60];
-            mc_swprintf(t, 0x60, L"%08X", input);
+        static String<T> intToHexStr(uint32_t input, int l = 8) {
+            wchar_t* t = new wchar_t[0x30];
+            mc_swprintf(t, 0x30, L"%s%dX", "%0", l, input);
+            mc_swprintf(t, 0x30, t, input);
             if      (sizeof(T) == sizeof(wchar_t)) return (T*) t;
             else if (sizeof(T) == sizeof(char))     return (T*) wcharToChar(t);
         }

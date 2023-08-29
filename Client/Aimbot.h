@@ -17,6 +17,9 @@ public:
         targetPlayers = true;
         targetEntities = true;
         maxDistance = 25.0f;
+
+        _module->addModuleToSettings((new Module(L"Target Entities", Module::Type::MODULE))->toggleState());
+        _module->addModuleToSettings((new Module(L"Target Players", Module::Type::MODULE))->toggleState());
     }
 
     static void aim() {
@@ -73,11 +76,11 @@ public:
     }
 
     bool shouldTargetPlayers() {
-        return targetPlayers;
+        return _module->getPageVector()[1]->getState();
     }
 
     bool shouldTargetEntities() {
-        return targetEntities;
+        return _module->getPageVector()[0]->getState();
     }
 
     float getMaxDistance() {
