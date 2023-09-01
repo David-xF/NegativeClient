@@ -25,7 +25,7 @@ namespace xf {
 
         template<typename T, typename... Args>
         static uint64_t measureMilli(T* funcPtr, Args... args) {
-            T* fixedPtr = mc::PointerFix::Fix(funcPtr);
+            T* fixedPtr = funcPtr;
             uint64_t startTime = mc::System::processTimeInMilliSecs();
             fixedPtr(args...);
             return mc::System::processTimeInMilliSecs() - startTime;
@@ -33,7 +33,7 @@ namespace xf {
 
         template<typename T, typename... Args>
         static uint64_t measureNano(T* funcPtr, Args... args) {
-            T* fixedPtr = mc::PointerFix::Fix(funcPtr);
+            T* fixedPtr = funcPtr;
             uint64_t startTime = mc::System::processTimeInNanoSecs();
             fixedPtr(args...);
             return mc::System::processTimeInNanoSecs() - startTime;

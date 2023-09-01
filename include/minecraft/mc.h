@@ -86,7 +86,6 @@
 #include "util/pair.h"
 #include "util/ParticleType.h"
 #include "util/ParticleType.h"
-#include "util/PointerFix.h"
 #include "util/SoundEvent.h"
 #include "util/unordered_map.h"
 #include "util/Vec3.h"

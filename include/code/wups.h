@@ -1,7 +1,6 @@
 #pragma once
 
 #include "mem.h"
-#include <minecraft/util/PointerFix.h>
 #include <xf/Vector.h>
 
 void writeMem(uint32_t addr, uint32_t value) {
@@ -9,7 +8,7 @@ void writeMem(uint32_t addr, uint32_t value) {
 }
 
 uint32_t branchTo(uint32_t origin, void* to, bool shouldFixPtr = true) {
-    uint32_t _addr = shouldFixPtr ? ((uint32_t) mc::PointerFix::Fix((void(*)()) to)) : (uint32_t) to;
+    uint32_t _addr = (uint32_t) to;
     uint32_t temp = (_addr - origin);
     if (0x48000000 > (0x48000000 + temp)) {
         return 0x4C000000 + temp;
@@ -18,10 +17,13 @@ uint32_t branchTo(uint32_t origin, void* to, bool shouldFixPtr = true) {
     }
 }
 
+extern "C" {
+    uint32_t data_end;
+};
+
 xf::Vector<void**> real_instructions;
-const int MaxTest = 0x1800;
-int __test_index = 0;
-uint32_t instructionBuffer[MaxTest];
+int __test_index;
+uint32_t* instructionBuffer;
 void* setupRealInstructions(uint32_t* buffer) {
     uint32_t endFor = (uint32_t) &instructionBuffer[__test_index];
     for (int i = 0; i < buffer[0] + 1; i++) {
@@ -54,7 +56,7 @@ void* safeInstructions(uint32_t startFunction, uint32_t nextFunction) {
 
 void HOOK_INIT(uint32_t addr, uint32_t funcPtr, int offset) {
     uint32_t hookPtr = (uint32_t) &instructionBuffer[__test_index];
-    uint32_t fFuncPtr = (uint32_t) mc::PointerFix::Fix((void(*)()) funcPtr);
+    uint32_t fFuncPtr = (uint32_t) funcPtr;
     writeMem(addr, branchTo(addr, (void*) hookPtr, false));
     writeMem(hookPtr + 0x0,  0x4E800421);                                                     // bctrl;
     writeMem(hookPtr + 0x4,  0x3D800000 | (fFuncPtr >> 16));                                  // lis r12, 0x;
@@ -150,6 +152,7 @@ void HOOK_INIT(uint32_t addr, uint32_t funcPtr, int offset) {
     res my_##name(__VA_ARGS__)
 
 void InitWups() {
+    instructionBuffer = &data_end + 0x1000;
     uint32_t* data = new uint32_t[0x10];
     code::Mem(0x104D4DDC).as<uint32_t>() = (uint32_t) data;
     data[0] = (uint32_t) &real_instructions;

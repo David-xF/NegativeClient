@@ -1,7 +1,6 @@
 #pragma once
 
 #include <code/code.h>
-#include "../../util/PointerFix.h"
 
 namespace mc {
     class CInput {
@@ -15,7 +14,7 @@ namespace mc {
         }
 
         bool RequestKeyboard(const wchar_t* nothing, const wchar_t* default_text, uint32_t unk_Ui0, uint32_t max_size, int(*call_back)(void *, bool), void* unk_Vp0, int32_t eKeyboardMode) {
-            return code::Func<bool, 0x0340A33C, CInput*, const wchar_t*, const wchar_t*, uint32_t, uint32_t, int(*)(void*, bool), void*, int32_t>()(this, nothing, default_text, unk_Ui0, max_size, mc::PointerFix::Fix(call_back), unk_Vp0, eKeyboardMode);
+            return code::Func<bool, 0x0340A33C, CInput*, const wchar_t*, const wchar_t*, uint32_t, uint32_t, int(*)(void*, bool), void*, int32_t>()(this, nothing, default_text, unk_Ui0, max_size, call_back, unk_Vp0, eKeyboardMode);
         }
 
     };

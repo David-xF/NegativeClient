@@ -193,10 +193,10 @@ int c_main(void*) {
     HOOK(0x02D9C8B0, onFrameInMenu, 0);
     HOOK(0x02FE3224, ChestRenderer_render, 0);
     REPLACE(0x031BC7E0, 0x031BE4F8, RenderSky);
+    REPLACE(0x031e55d4, 0x031E7534, SendPosition);
     REPLACE(0x030F9784, 0x030F9E14, RenderHitbox);
     REPLACE(0x031e3a80, 0x031e50e4, LocalPlayerTick);
     REPLACE(0x03052720, 0x03052854, HandleDisconnect);
-    REPLACE(0x031e55d4, 0x031E7534, SendPosition);
     REPLACE(0x031ec874, 0x031EC9F0, LocalPlayerTickHeadTurn);
     writeMem(0x030FA014, 0x2C090001);
 
@@ -213,7 +213,7 @@ int c_main(void*) {
 }
 
 void _main() {
-    mc::C4JThreadImpl* thread = new mc::C4JThreadImpl((int(*)(void*)) mc::PointerFix::Fix(c_main), nullptr, "Loading Negative Client Assets", 0x200);
+    mc::C4JThreadImpl* thread = new mc::C4JThreadImpl(c_main, nullptr, "Loading Negative Client Assets", 0x200);
     thread->Run();
     thread->SetDeleteOnExit(true);
 }

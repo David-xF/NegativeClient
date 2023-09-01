@@ -69,9 +69,9 @@ public:
     }
 
     void setEvents(void(*onEn)(Module*), void(*onDis)(Module*), void(*onCl)(Module*)) {
-        onEnable  = (void(*)(Module*)) mc::PointerFix::Fix(onEn);
-        onDisable = (void(*)(Module*)) mc::PointerFix::Fix(onDis);
-        onClick   = (void(*)(Module*)) mc::PointerFix::Fix(onCl);
+        onEnable  = (void(*)(Module*)) onEn;
+        onDisable = (void(*)(Module*)) onDis;
+        onClick   = (void(*)(Module*)) onCl;
     }
 
     Module* at(int index) {
