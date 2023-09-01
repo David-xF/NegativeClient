@@ -24,6 +24,7 @@
 #include "Client/Scaffold.h"
 #include "Client/Flight.h"
 #include "Client/Keystrokes.h"
+#include "Client/ChestESP.h"
 
 #include <xf/String.h>
 #include <xf/Benchmark.h>
@@ -50,7 +51,7 @@ DECL_FUNCTION(void, RenderHitbox, void* renderer, const mc_boost::shared_ptr<mc:
     ESP::draw(renderer, ref, unk, x, y, z, a, b);
 }
 
-DECL_HOOK(onFrameInGame) {
+DECL_HOOK(onFrameInGame, void) {
     Client::draw(false);
     Aimbot::aim();
     KillAura::draw();
@@ -60,7 +61,7 @@ DECL_HOOK(onFrameInGame) {
     KeyStrokes::draw();
 }
 
-DECL_HOOK(onFrameInMenu) {
+DECL_HOOK(onFrameInMenu, void) {
     Client::draw(true);
 }
 
@@ -109,6 +110,10 @@ DECL_FUNCTION(void, SendPosition, mc::LocalPlayer* lPlayer) {
     Scaffold::updatePos(false);
 }
 
+DECL_HOOK(ChestRenderer_render, void* renderer, const mc_boost::shared_ptr<uint32_t>& entity, double x, double y, double z) {
+    ChestESP::draw(x, y, z);
+}
+
 int c_main(void*) {
     init();
 
@@ -135,6 +140,9 @@ int c_main(void*) {
     
     ESP* esp = new ESP();
     VisualPage->addModuleToVector(esp->getModule());
+
+    ChestESP* chestEsp = new ChestESP();
+    VisualPage->addModuleToVector(chestEsp->getModule());
 
     CustomSky* customSky = new CustomSky();
     VisualPage->addModuleToVector(customSky->getModule());
@@ -183,6 +191,7 @@ int c_main(void*) {
 
     HOOK(0x02D9CAD0, onFrameInGame, 0);
     HOOK(0x02D9C8B0, onFrameInMenu, 0);
+    HOOK(0x02FE3224, ChestRenderer_render, 0);
     REPLACE(0x031BC7E0, 0x031BE4F8, RenderSky);
     REPLACE(0x030F9784, 0x030F9E14, RenderHitbox);
     REPLACE(0x031e3a80, 0x031e50e4, LocalPlayerTick);

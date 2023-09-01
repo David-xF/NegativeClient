@@ -49,8 +49,8 @@ void* safeInstructions(uint32_t startFunction, uint32_t nextFunction) {
     return setupRealInstructions(ret);
 }
 
-#define DECL_HOOK(func) \
-    void hook_##func() 
+#define DECL_HOOK(func, ...) \
+    void hook_##func(__VA_ARGS__) 
 
 void HOOK_INIT(uint32_t addr, uint32_t funcPtr, int offset) {
     uint32_t hookPtr = (uint32_t) &instructionBuffer[__test_index];

@@ -14,9 +14,8 @@ public:
     };
 
     Module(const wchar_t* name, Type type) {
-        const int maxNameSize = 0x20;
-        moduleName = new wchar_t[maxNameSize];
-        memcpy(moduleName, name, maxNameSize);
+        moduleName = new wchar_t[mc_wcslen(name) + 1];
+        mc_wcscpy(moduleName, name);
         moduleType = type;
         pageVector = xf::Vector<Module*>();
         isEnabled = false;
