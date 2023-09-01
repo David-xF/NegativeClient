@@ -82,8 +82,8 @@ public:
                     lastBtnPressed = 1;
                 } else if (lastBtnPressed == 1 && !isEnd) {
                     currMod->openSettings();
-                    t1 = mc::System::processTimeInMilliSecsu64();
-                    t2 = mc::System::processTimeInMilliSecsu64();
+                    t1 = mc::System::processTimeInMilliSecs();
+                    t2 = mc::System::processTimeInMilliSecs();
                     lastBtnPressed = 2;
                 } else if (lastBtnPressed == 2 && isEnd) {
                     lastBtnPressed = 0;
@@ -159,9 +159,9 @@ public:
         static int count = 0;
         static uint64_t basetime = 0;
         if (count == 0) {
-            basetime = mc::System::processTimeInMilliSecsu64();
+            basetime = mc::System::processTimeInMilliSecs();
         } else {
-            uint64_t now = mc::System::processTimeInMilliSecsu64();
+            uint64_t now = mc::System::processTimeInMilliSecs();
             if (now - basetime >= 1000) {
                 fps = mc::toInt(mc::toFloat(count * 1000) / mc::toFloat(now - basetime) + 0.5f);
                 basetime = now;

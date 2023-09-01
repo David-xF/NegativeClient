@@ -104,7 +104,7 @@ public:
 
     static void onDraw() {
         static uint64_t lastTime = 0;
-        uint64_t currTime = mc::System::processTimeInMilliSecsu64();;
+        uint64_t currTime = mc::System::processTimeInMilliSecs();;
         if (lastTime == 0) {
             lastTime = currTime;
             onTick();

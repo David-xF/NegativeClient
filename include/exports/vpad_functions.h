@@ -97,7 +97,7 @@ EXPORT_DECL(void, VPADRead, int chan, VPADData *buffer, uint32_t buffer_size, in
     static uint64_t lastTime = 0;                                                \
     uint64_t mTime = minTime;                                                    \
     uint64_t clickTime = 1000 / cps;                                             \
-    uint64_t currentTime = mc::System::processTimeInMilliSecsu64();              \
+    uint64_t currentTime = mc::System::processTimeInMilliSecs();              \
     static bool wasBtnPressed = false;                                           \
     if (ifCheck) {                                                               \
         if     (!(mTime     > (currentTime -      lastTime) && wasBtnPressed)) { \

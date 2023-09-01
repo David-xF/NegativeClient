@@ -127,8 +127,6 @@ public:
         if (armorPercent > 0)
             xf::GUI::DrawHelper::drawRoundedBox(x + 10 - ((width - cWidth) / 2), __y - 6, cWidth, 4, 2, 0xAAAAAA, 0xFF);
         
-        mc_printf(L"%d", mc::toInt(armorPercent * 100));
-
         xf::GUI::DrawHelper::DisplayText(font, target->name, 1, x + 10 - (width / 2), y - 2 - FONT_CHAR_HEIGHT, 0xFFFFFFFF, false);
     }
 

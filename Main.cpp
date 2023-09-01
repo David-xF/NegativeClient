@@ -23,8 +23,10 @@
 #include "Client/Jesus.h"
 #include "Client/Scaffold.h"
 #include "Client/Flight.h"
+#include "Client/Keystrokes.h"
 
 #include <xf/String.h>
+#include <xf/Benchmark.h>
 
 #define CURRENT_VERSION_BUILD "0.1.0-WIP"
 
@@ -54,6 +56,8 @@ DECL_HOOK(onFrameInGame) {
     KillAura::draw();
 
     Scaffold::onTick();
+
+    KeyStrokes::draw();
 }
 
 DECL_HOOK(onFrameInMenu) {
@@ -68,6 +72,15 @@ DECL_FUNCTION(void, LocalPlayerTickHeadTurn, mc::LocalPlayer* lPlayer, float yaw
     Aimbot::aim();
     real_LocalPlayerTickHeadTurn(lPlayer, yaw, pitch);
     Aimbot::aim();
+}
+
+int test__M(int amt) {
+    int m = 0;
+    for (int i = 0; i < amt; i++) {
+        m = i * 20 + i - (i * 3);
+    }
+
+    return m;
 }
 
 DECL_FUNCTION(void, LocalPlayerTick, mc::LocalPlayer* lPlayer) {
@@ -143,6 +156,9 @@ int c_main(void*) {
 
     Scaffold* scaffold = new Scaffold();
     MovementPage->addModuleToVector(scaffold->getModule());
+
+    KeyStrokes* strokes = new KeyStrokes();
+    VisualPage->addModuleToVector(strokes->getModule());
 
     Module* reloadTexture = new Module(L"Reload Textures", Module::Type::BUTTON);
     reloadTexture->setEvents(nullptr, nullptr, [](Module* mod) {
