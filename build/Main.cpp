@@ -12,7 +12,7 @@ std::string hexToString8(uint32_t value) {
     return result;
 }
 
-void printHex(std::string file, uint32_t start) {
+void printHex(std::string file) {
     std::ifstream myfile;
     myfile.open(file, std::ios::in | std::ios::binary);
     
@@ -25,7 +25,7 @@ void printHex(std::string file, uint32_t start) {
     myfile.close();
 
     for (int i = 0; i < length; i += 4) {
-        printf("0x%08X = .uint 0x%02X%02X%02X%02X\n", start + i, buffer[i+0], buffer[i+1], buffer[i+2], buffer[i+3]);
+        printf(".uint 0x%02X%02X%02X%02X\n", buffer[i+0], buffer[i+1], buffer[i+2], buffer[i+3]);
     }
 }
 
@@ -42,16 +42,18 @@ int main(int argc, char* argv[]) {
     std::cout << "0x104D4DD8 = .uint _Code" << std::endl;
     std::cout << "0x104D4DDC = .uint 0x0" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << "_onStart = 0x00000000" << std::endl;
-    std::cout << "0x00000000 = bctrl" << std::endl;
-    std::cout << "0x00000004 = lis r12, _Code@ha" << std::endl;
-    std::cout << "0x00000008 = addi r12, r12, _Code@l" << std::endl;
-    std::cout << "0x0000000C = mtctr r12" << std::endl;
-    std::cout << "0x00000010 = bctrl" << std::endl;
-    std::cout << "0x00000014 = b 0x02F37158" << std::endl;
-    std::cout << "" << std::endl;
+    std::cout << ".origin = codecave" << std::endl;
+     std::cout << "" << std::endl;
     std::cout << "# .text" << std::endl;
-    std::cout << "_Code = 0x00000018" << std::endl;
-    printHex("build/text.bin", 0x18);
+    std::cout << "_Code:" << std::endl;
+    printHex("build/text.bin");
+    std::cout << "" << std::endl;
+    std::cout << "_onStart:" << std::endl;
+    std::cout << "bctrl" << std::endl;
+    std::cout << "lis r12, _Code@ha" << std::endl;
+    std::cout << "addi r12, r12, _Code@l" << std::endl;
+    std::cout << "mtctr r12" << std::endl;
+    std::cout << "bctrl" << std::endl;
+    std::cout << "b 0x02F37158" << std::endl;
     return 0;
 }

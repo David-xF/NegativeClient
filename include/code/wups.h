@@ -7,7 +7,7 @@ void writeMem(uint32_t addr, uint32_t value) {
     code::Mem(addr).as<uint32_t>() = value;
 }
 
-uint32_t branchTo(uint32_t origin, void* to, bool shouldFixPtr = true) {
+uint32_t branchTo(uint32_t origin, void* to) {
     uint32_t _addr = (uint32_t) to;
     uint32_t temp = (_addr - origin);
     if (0x48000000 > (0x48000000 + temp)) {
@@ -17,13 +17,10 @@ uint32_t branchTo(uint32_t origin, void* to, bool shouldFixPtr = true) {
     }
 }
 
-extern "C" {
-    uint32_t data_end;
-};
-
 xf::Vector<void**> real_instructions;
-int __test_index;
-uint32_t* instructionBuffer;
+const int MaxTest = 0x1800;
+int __test_index = 0;
+uint32_t instructionBuffer[MaxTest];
 void* setupRealInstructions(uint32_t* buffer) {
     uint32_t endFor = (uint32_t) &instructionBuffer[__test_index];
     for (int i = 0; i < buffer[0] + 1; i++) {
@@ -54,21 +51,21 @@ void* safeInstructions(uint32_t startFunction, uint32_t nextFunction) {
 #define DECL_HOOK(func, ...) \
     void hook_##func(__VA_ARGS__) 
 
-void HOOK_INIT(uint32_t addr, uint32_t funcPtr, int offset) {
+void _TEST(uint32_t addr, uint32_t funcPtr, int offset) {
     uint32_t hookPtr = (uint32_t) &instructionBuffer[__test_index];
     uint32_t fFuncPtr = (uint32_t) funcPtr;
-    writeMem(addr, branchTo(addr, (void*) hookPtr, false));
-    writeMem(hookPtr + 0x0,  0x4E800421);                                                     // bctrl;
-    writeMem(hookPtr + 0x4,  0x3D800000 | (fFuncPtr >> 16));                                  // lis r12, 0x;
-    writeMem(hookPtr + 0x8,  0x618C0000 | (fFuncPtr & 0xFFFF));                               // ori r12, r12, 0x;
-    writeMem(hookPtr + 0xC,  0x7D8903A6);                                                     // mtctr r12;
-    writeMem(hookPtr + 0x10, 0x4E800421);                                                     // bctrl;
-    writeMem(hookPtr + 0x14, branchTo(hookPtr + 0x14, (void*) (addr + 0x4 + offset), false)); // b addr+0x4;
+    writeMem(addr, branchTo(addr, (void*) hookPtr));
+    writeMem(hookPtr + 0x0,  0x4E800421);                                              // bctrl;
+    writeMem(hookPtr + 0x4,  0x3D800000 | (fFuncPtr >> 16));                           // lis r12, 0x;
+    writeMem(hookPtr + 0x8,  0x618C0000 | (fFuncPtr & 0xFFFF));                        // ori r12, r12, 0x;
+    writeMem(hookPtr + 0xC,  0x7D8903A6);                                              // mtctr r12;
+    writeMem(hookPtr + 0x10, 0x4E800421);                                              // bctrl;
+    writeMem(hookPtr + 0x14, branchTo(hookPtr + 0x14, (void*) (addr + 0x4 + offset))); // b addr+0x4;
     __test_index += 8;
 }
 
 #define HOOK(addr, func, offset) \
-    HOOK_INIT(addr, (uint32_t) hook_##func, offset);
+    _TEST(addr, (uint32_t) hook_##func, offset);
     
 #define REPLACE(sAddr, nAddr, func) REPLACE_EX(sAddr, nAddr, real_##func, my_##func, func, real_instructions)
 #define REPLACE_EX(sAddr, nAddr, original_func, replace_func, func, ins_list) \
@@ -93,7 +90,7 @@ void HOOK_INIT(uint32_t addr, uint32_t funcPtr, int offset) {
 
 // Found in WUPS then TCPGecko (Expanded by david.xf)
 #define DECL_FUNCTION(res, name, ...)                                \
-    res real_##name(__VA_ARGS__) {                                   \
+    __attribute__((section(".text"))) res real_##name(__VA_ARGS__) { \
         asm volatile("_" #name "Start:");                            \
         asm volatile("stwu 1, -0x100(1)");                           \
         asm volatile("mflr 0");                                      \
@@ -152,7 +149,6 @@ void HOOK_INIT(uint32_t addr, uint32_t funcPtr, int offset) {
     res my_##name(__VA_ARGS__)
 
 void InitWups() {
-    instructionBuffer = &data_end + 0x1000;
     uint32_t* data = new uint32_t[0x10];
     code::Mem(0x104D4DDC).as<uint32_t>() = (uint32_t) data;
     data[0] = (uint32_t) &real_instructions;

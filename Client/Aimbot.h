@@ -20,6 +20,7 @@ public:
 
         _module->addModuleToSettings((new Module(L"Target Entities", Module::Type::MODULE))->toggleState());
         _module->addModuleToSettings((new Module(L"Target Players", Module::Type::MODULE))->toggleState());
+        _module->addModuleToSettings((new Module(L"Target Spectators", Module::Type::MODULE)));
     }
 
     static void aim() {
@@ -32,12 +33,23 @@ public:
         if (aimbot->shouldTargetPlayers()) {
             for (mc_boost::shared_ptr<mc::Player>& player : level->players) {
                 if (player->uuid != lPlayer->uuid) {
-                    float currEntityDist = player->position.distance(lPlayer->position);
-                    if (nearest == nullptr) {
-                        nearest = player.ptr;
-                    } else {
-                        float nearestEntityDist = nearest->position.distance(lPlayer->position);
-                        if (nearestEntityDist > currEntityDist) nearest = player.ptr;
+                    bool isAllowedToBeAdded = true;
+                    if (!aimbot->shouldTargetSpectators()) {
+                        if (player->type() == mc::RemotePlayer::GetType()) {
+                            mc::RemotePlayer* rPlayer = (mc::RemotePlayer*) player.ptr;
+                            mc::GameType* gType = rPlayer->GetGameType();
+                            if (gType->getId() == 3) isAllowedToBeAdded = false;
+                        }
+                    }
+
+                    if (isAllowedToBeAdded) {
+                        float currEntityDist = player->position.distance(lPlayer->position);
+                        if (nearest == nullptr) {
+                            nearest = player.ptr;
+                        } else {
+                            float nearestEntityDist = nearest->position.distance(lPlayer->position);
+                            if (nearestEntityDist > currEntityDist) nearest = player.ptr;
+                        }
                     }
                 }
             }
@@ -45,7 +57,12 @@ public:
 
         if (aimbot->shouldTargetEntities()) {
             for (mc_boost::shared_ptr<mc::Entity>& entity : level->entities) {
-                if (entity.ptr != lPlayer && !Module::isBlackListed(entity->type())) {
+                bool isPlayer = false;
+                for (mc_boost::shared_ptr<mc::Player>& player : level->players) {
+                    if (player.ptr == entity.ptr) isPlayer = true;
+                }
+
+                if (entity.ptr != lPlayer && !Module::isBlackListed(entity->type()) && !isPlayer) {
                     float currEntityDist = entity->position.distance(lPlayer->position);
                     if (nearest == nullptr) {
                         nearest = entity.ptr;
@@ -73,6 +90,10 @@ public:
 
     Module* getModule() {
         return _module;
+    }
+
+    bool shouldTargetSpectators() {
+        return _module->getPageVector()[2]->getState();
     }
 
     bool shouldTargetPlayers() {

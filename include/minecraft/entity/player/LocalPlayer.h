@@ -46,9 +46,14 @@ namespace mc {
 
 		struct ClientPacketListener* listener;
         uint32_t field_0x86C;
+        uint32_t field_0x870;
         uint32_t field_0x874;
         uint32_t field_0x878;
         uint32_t field_0x87C;
+        uint32_t field_0x880;
+        uint32_t field_0x884;
+        uint32_t field_0x888;
+        uint32_t field_0x88C;
         uint32_t field_0x890;
         uint32_t field_0x894;
         uint32_t field_0x898;

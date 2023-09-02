@@ -30,6 +30,7 @@
 #include "entity/player/LocalPlayer.h"
 #include "entity/player/Player.h"
 #include "entity/player/PlayerUID.h"
+#include "entity/player/RemotePlayer.h"
 #include "entity/player/ServerPlayer.h"
 
 #include "entity/AreaEffectCloud.h"
