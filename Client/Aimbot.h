@@ -27,8 +27,12 @@ public:
         Aimbot* aimbot = (Aimbot*) staticAimbot;
         if (!aimbot->getModule()->getState()) return;
         mc::Entity* nearest = nullptr;
-        mc::LocalPlayer* lPlayer = mc::Minecraft::getInstance()->thePlayer;
+        mc::Minecraft* minecraft = mc::Minecraft::getInstance();
+        if (!minecraft) return;
+        mc::LocalPlayer* lPlayer = minecraft->thePlayer;
+        if (!lPlayer) return;
         mc::Level* level = lPlayer->lvl;
+        if (!level) return;
 
         if (aimbot->shouldTargetPlayers()) {
             for (mc_boost::shared_ptr<mc::Player>& player : level->players) {
@@ -86,6 +90,8 @@ public:
             lPlayer->yaw = yaw;
             lPlayer->pitch = pitch;
         }
+
+        return;
     }
 
     Module* getModule() {

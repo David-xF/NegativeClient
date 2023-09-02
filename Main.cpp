@@ -53,15 +53,26 @@ DECL_FUNCTION(void, RenderHitbox, void* renderer, const mc_boost::shared_ptr<mc:
 
 DECL_HOOK(onFrameInGame, void) {
     Client::draw(false);
-    Aimbot::aim();
     KillAura::draw();
 
     Scaffold::onTick();
 
     KeyStrokes::draw();
+    Jesus::onTick();
 }
 
 DECL_HOOK(onFrameInMenu, void) {
+    static mc::C4JThreadImpl* aimbotThread = nullptr;
+    if (!aimbotThread) {
+        aimbotThread = new mc::C4JThreadImpl([](void*) {
+            while (true) {
+                Aimbot::aim();
+            }
+            return 0;
+        }, nullptr, "Aimbot Thread", 0x200);
+        aimbotThread->Run();
+        aimbotThread->SetDeleteOnExit(true);
+    }
     Client::draw(true);
 }
 
@@ -70,9 +81,7 @@ DECL_FUNCTION(void, RenderSky, void* renderer, float f) {
 }
 
 DECL_FUNCTION(void, LocalPlayerTickHeadTurn, mc::LocalPlayer* lPlayer, float yaw, float pitch) {
-    Aimbot::aim();
     real_LocalPlayerTickHeadTurn(lPlayer, yaw, pitch);
-    Aimbot::aim();
 }
 
 int test__M(int amt) {
@@ -85,14 +94,10 @@ int test__M(int amt) {
 }
 
 DECL_FUNCTION(void, LocalPlayerTick, mc::LocalPlayer* lPlayer) {
-    Jesus::onTick();
-
     Flight::onTick(true);
-    Aimbot::aim();
     KillAura::onTick(true);
     real_LocalPlayerTick(lPlayer);
     KillAura::onTick(false);
-    Aimbot::aim();
     Flight::onTick(false);
 
     Scaffold::onTick();
@@ -104,9 +109,7 @@ DECL_FUNCTION(void, HandleDisconnect, mc::ClientPacketListener* listener, mc_boo
 
 DECL_FUNCTION(void, SendPosition, mc::LocalPlayer* lPlayer) {
     Scaffold::updatePos(true);
-    Aimbot::aim();
     real_SendPosition(lPlayer);
-    Aimbot::aim();
     Scaffold::updatePos(false);
 }
 
