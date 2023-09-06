@@ -52,11 +52,11 @@ public:
 
     void setState(bool state) {
         if (moduleType == Type::BUTTON) {
-            if (onClick != nullptr) onClick(this);
+            if (onClick) onClick(this);
             return;
         }
         isEnabled = state;
-        if (onEnable == nullptr || onDisable == nullptr) return;
+        if (!onEnable || !onDisable) return;
         isEnabled ? onEnable(this) : onDisable(this); 
     }
 

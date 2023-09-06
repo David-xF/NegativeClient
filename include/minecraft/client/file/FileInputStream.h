@@ -19,6 +19,10 @@ namespace mc {
             code::Func<void, 0x02320788, FileInputStream*, void*>()(this, unk);
         }
 
+        void skip(int l) {
+            code::Func<void, 0x02320984, FileInputStream*, int>()(this, l);
+        }
+
         int filesize() {
             return code::Func<int, 0x02320990, FileInputStream*>()(this);
         }

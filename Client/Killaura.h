@@ -29,7 +29,7 @@ public:
             mc::LocalPlayer* lPlayer = mc::Minecraft::getInstance()->thePlayer;
             for (mc_boost::shared_ptr<mc::Entity>& entity : lPlayer->lvl->entities) {
                 if (entity.ptr != lPlayer && !Module::isBlackListed(entity->type())) {
-                    if (nearestEntity == nullptr) {
+                    if (!nearestEntity) {
                         nearestEntity = entity.ptr;
                     } else {
                         if (nearestEntity->position.distance(lPlayer->position) > entity->position.distance(lPlayer->position)) {
@@ -51,7 +51,7 @@ public:
             if (wasPlayer && killAura->canTargetPlayers())   canAttack = true;
             if (!wasPlayer && killAura->canTargetEntities()) canAttack = true;
 
-            if (nearestEntity != nullptr && canAttack) {
+            if (nearestEntity && canAttack) {
                 if (nearestEntity->position.distance(lPlayer->position) > killAura->getMaxDist()) return;
 
                 mc_boost::shared_ptr<mc::Packet> packet = new mc::ServerboundInteractPacket(nearestEntity);

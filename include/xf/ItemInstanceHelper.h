@@ -11,7 +11,7 @@ namespace xf {
     	};
     
         static void setName(mc::ItemInstance* _item, mstd::wstring const & name) {
-            if (_item->tag == nullptr) _item->setTag(new mc::CompoundTag());
+            if (!_item->tag) _item->setTag(new mc::CompoundTag());
             
             if (!_item->tag->contains(L"display")) {
                 mc::CompoundTag* tag = new mc::CompoundTag();
@@ -24,7 +24,7 @@ namespace xf {
         }
     
         static void addEnchant(mc::ItemInstance* _item, int ench, int lvl) {
-            if (_item->tag == nullptr) _item->setTag(new mc::CompoundTag()); 
+            if (!_item->tag) _item->setTag(new mc::CompoundTag()); 
     
             bool isAlreadyThere = _item->tag->contains(L"ench");
             if (!isAlreadyThere) {
@@ -42,7 +42,7 @@ namespace xf {
         }
     
         static void addAttrib(mc::ItemInstance* _item, int id, double amt, int op, mstd::wstring const & str) {
-            if (_item->tag == nullptr) _item->setTag(new mc::CompoundTag()); 
+            if (!_item->tag) _item->setTag(new mc::CompoundTag()); 
     
             bool isAlreadyThere = _item->tag->contains(L"AttributeModifiers");
             if (!isAlreadyThere) {
@@ -62,7 +62,7 @@ namespace xf {
         }
 
         static void addPotionEffect(mc::ItemInstance* _item, int id, int amplifier, int duration) {
-            if (_item->tag == nullptr) _item->setTag(new mc::CompoundTag());
+            if (!_item->tag) _item->setTag(new mc::CompoundTag());
 
             bool isAlreadyThere = _item->tag->contains(L"CustomPotionEffects");
             if (!isAlreadyThere) {

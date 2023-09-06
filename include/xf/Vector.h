@@ -31,7 +31,7 @@ namespace xf {
         }
 
         void push_back(T t) {
-            if (data == nullptr || length == 0) {
+            if (!data || length == 0) {
                 data = new T[1];
                 length = 1;
 
@@ -47,7 +47,7 @@ namespace xf {
         }   
 
         void push_front(T t) {
-            if (data == nullptr || length == 0) {
+            if (!data || length == 0) {
                 data = new T[1];
                 length = 1;
 
@@ -72,7 +72,7 @@ namespace xf {
 
         void clear() {
             length = 0;
-            if (data != nullptr) _delete(data);
+            if (data) _delete(data);
             data = nullptr;
         }
         

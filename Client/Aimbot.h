@@ -48,7 +48,7 @@ public:
 
                     if (isAllowedToBeAdded) {
                         float currEntityDist = player->position.distance(lPlayer->position);
-                        if (nearest == nullptr) {
+                        if (!nearest) {
                             nearest = player.ptr;
                         } else {
                             float nearestEntityDist = nearest->position.distance(lPlayer->position);
@@ -68,7 +68,7 @@ public:
 
                 if (entity.ptr != lPlayer && !Module::isBlackListed(entity->type()) && !isPlayer) {
                     float currEntityDist = entity->position.distance(lPlayer->position);
-                    if (nearest == nullptr) {
+                    if (!nearest) {
                         nearest = entity.ptr;
                     } else {
                         float nearestEntityDist = nearest->position.distance(lPlayer->position);
@@ -78,7 +78,7 @@ public:
             }
         }
 
-        if (nearest != nullptr) {
+        if (nearest) {
             if (nearest->position.distance(lPlayer->position) >= aimbot->getMaxDistance()) return;
             double diffX = nearest->position.x - lPlayer->position.x;
             double diffY = (nearest->position.y + nearest->getEyeHeight()) - (lPlayer->position.y + lPlayer->getEyeHeight());
@@ -86,6 +86,9 @@ public:
             double dist = sqrt(pow(diffX, 2) + pow(diffZ, 2));
             float yaw =   (float)   atan2(diffZ, diffX) * (180.0 / M_PI) - 90.0f;
 		    float pitch = (float) (-atan2(diffY, dist)) * (180.0 / M_PI);
+
+            if (isnan(yaw)   || isinf(yaw))   yaw   = 0.0f;
+            if (isnan(pitch) || isinf(pitch)) pitch = 0.0f;
 
             lPlayer->yaw = yaw;
             lPlayer->pitch = pitch;

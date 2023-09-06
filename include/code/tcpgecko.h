@@ -3,7 +3,7 @@
 #include <inttypes.h>
 
 #define EXPORT_DECL(res, func, ...) res(*func)(__VA_ARGS__) = 0;
-#define EXPORT_VAR(type, var)           type var;
+#define EXPORT_VAR(type, var)       type var;
 
 EXPORT_DECL(int, OSDynLoad_Acquire, const char* rpl, uint32_t* handle);
 EXPORT_DECL(int, OSDynLoad_FindExport, uint32_t handle, int isData, const char* symbol, void* address);

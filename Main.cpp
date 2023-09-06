@@ -73,7 +73,9 @@ DECL_HOOK(onFrameInMenu, void) {
         aimbotThread->Run();
         aimbotThread->SetDeleteOnExit(true);
     }
+
     Client::draw(true);
+    Jesus::onTick();
 }
 
 DECL_FUNCTION(void, RenderSky, void* renderer, float f) {
@@ -115,6 +117,11 @@ DECL_FUNCTION(void, SendPosition, mc::LocalPlayer* lPlayer) {
 
 DECL_HOOK(ChestRenderer_render, void* renderer, const mc_boost::shared_ptr<uint32_t>& entity, double x, double y, double z) {
     ChestESP::draw(x, y, z);
+}
+
+DECL_FUNCTION(uint32_t, LiquidBlock_getClip, void) {
+    Jesus* jesus = (Jesus*) staticJesus;
+    return jesus->getPtr()[0];
 }
 
 int c_main(void*) {
@@ -200,18 +207,9 @@ int c_main(void*) {
     REPLACE(0x030F9784, 0x030F9E14, RenderHitbox);
     REPLACE(0x031e3a80, 0x031e50e4, LocalPlayerTick);
     REPLACE(0x03052720, 0x03052854, HandleDisconnect);
+    REPLACE(0x025A963C, 0x025A9648, LiquidBlock_getClip);
     REPLACE(0x031ec874, 0x031EC9F0, LocalPlayerTickHeadTurn);
     writeMem(0x030FA014, 0x2C090001);
-
-    uint32_t jesusPtr = (uint32_t) jesus->getPtr();
-    if ((jesusPtr & 0xFFFF) >= 0x8000) {
-        uint32_t temp = jesusPtr;
-        jesusPtr += 0x10000;
-        jesusPtr = jesusPtr & 0xFFFF0000;
-        jesusPtr = jesusPtr | (0x8000 - (temp & 0xFFFF));
-    }
-    writeMem(0x025A963C, 0x3C600000 | ((jesusPtr >> 16) & 0xFFFF));
-    writeMem(0x025A9640, 0x80630000 | ((jesusPtr >> 0)  & 0xFFFF));
     return 0;
 }
 

@@ -72,9 +72,9 @@ public:
         float sY = (ref->aabb->max.y - ref->aabb->min.y);
         float sZ = (ref->aabb->max.z - ref->aabb->min.z) / 2.0f;
 
-        uint32_t color = player == nullptr ? esp->getColor() : colors[player->colourIndex];
+        uint32_t color = !player ? esp->getColor() : colors[player->colourIndex];
         if (!esp->playerColor()) color = esp->getColor();
-        if (esp->playerColor() && player != nullptr) color = (esp->getColor() & 0xFF000000) | color;
+        if (esp->playerColor() && player) color = (esp->getColor() & 0xFF000000) | color;
         
         // My Hitbox
         xf::GUI::DrawHelper::DisplayBox3D(
