@@ -20,6 +20,7 @@ enum CURLOption {
     CINIT(PORT,          LONG,           3),
     CINIT(WRITEFUNCTION, FUNCTIONPOINT, 11),
     CINIT(READFUNCTION,  FUNCTIONPOINT, 12),
+    CINIT(IDK,           OBJECTPOINT,   12),
 };
 
 EXPORT_DECL(void*, curl_easy_init, void);

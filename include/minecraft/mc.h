@@ -39,6 +39,7 @@
 #include "entity/LivingEntity.h"
 
 #include "item/BlockItem.h"
+#include "item/BowItem.h"
 #include "item/Item.h"
 #include "item/ItemInstane.h"
 
@@ -60,6 +61,9 @@
 #include "network/packet/CraftItemPacket.h"
 #include "network/packet/DisconnectPacket.h"
 #include "network/packet/Packet.h"
+
+#include "network/server/MinecraftServer.h"
+#include "network/server/PlayerList.h"
 
 #include "rendering/buffer/BufferBuilder.h"
 #include "rendering/buffer/BufferedImage.h"
@@ -95,3 +99,11 @@
 
 #include "world/Level.h"
 #include "world/ServerLevel.h"
+
+template<typename... Args>
+void mc_printf(const wchar_t* x, Args... args) {
+    if (!mc::Minecraft::getInstance()->thePlayer) return;
+    wchar_t temp[0xA0];
+    mc_swprintf(temp, 0xA0, x, args...);
+    mc::Minecraft::getInstance()->gui->addMessage(temp, 0, 0, 0, 0, 0);
+}

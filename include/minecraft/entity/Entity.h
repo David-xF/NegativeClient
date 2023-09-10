@@ -48,8 +48,8 @@ namespace mc {
 			code::Func<void, 0x02334EF4, Entity*, double, double, double>()(this, _x, _y, _z);
 		}
 
-		void startRiding(mc_boost::shared_ptr<Entity> const & entity, bool unk) {
-			code::Func<void, 0x0233BEA0, Entity*, mc_boost::shared_ptr<Entity> const &, bool>()(this, entity, unk);
+		void startRiding(const mc_boost::shared_ptr<Entity>& entity, bool unk) {
+			code::Func<void, 0x0233BEA0, Entity*, const mc_boost::shared_ptr<Entity>&, bool>()(this, entity, unk);
 		}
 
 		const Vec3& calculateViewVector() {

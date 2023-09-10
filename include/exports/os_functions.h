@@ -15,6 +15,8 @@ EXPORT_DECL(int, OSScreenFlipBuffersEx, unsigned int bufferNum);
 EXPORT_DECL(int, OSCreateThread, void *thread, int(*callback)(int, void * ), int argc, void *args, uint32_t stack, uint32_t stack_size, int priority, uint32_t attr);
 EXPORT_DECL(int, OSResumeThread, void *thread);
 
+EXPORT_DECL(void, OSConsoleWrite, const char* msg, int size);
+
 EXPORT_DECL(int, MCP_Open, void);
 EXPORT_DECL(int, MCP_GetDeviceId, int handle, uint64_t* devideId);
 EXPORT_DECL(int, MCP_Close, int handle);
@@ -57,6 +59,8 @@ void InitOSFunctionPointers() {
 
     OS_FIND_EXPORT(coreinit_handle, OSCreateThread);
     OS_FIND_EXPORT(coreinit_handle, OSResumeThread);
+
+    OS_FIND_EXPORT(coreinit_handle, OSConsoleWrite);
 
     OS_FIND_EXPORT(coreinit_handle, MCP_Open);
     OS_FIND_EXPORT(coreinit_handle, MCP_GetDeviceId);

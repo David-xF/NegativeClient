@@ -18,7 +18,7 @@ uint32_t branchTo(uint32_t origin, void* to) {
 }
 
 xf::Vector<void**> real_instructions;
-const int MaxTest = 0x1800;
+const int MaxTest = 0x2000;
 int __test_index = 0;
 uint32_t instructionBuffer[MaxTest];
 void* setupRealInstructions(uint32_t* buffer) {

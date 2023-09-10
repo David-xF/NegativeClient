@@ -2,6 +2,9 @@
 
 #include <code/code.h>
 
+#include "../client/resource/ResourceLocation.h"
+#include "../client/resource/wstring.h"
+
 namespace mc {
     class Item {
     public:
@@ -25,6 +28,10 @@ namespace mc {
             code::Func<void, 0x024B6C48, Item*, uint8_t>()(this, arg1);
         }
 
+        void setMaxStackSize(int size) {
+            code::Func<void, 0x024b2bd8, Item*, int>()(this, size);
+        }
+
         static bool isItemABlock(int id) {
             return code::Func<bool, 0x024cf838, int>()(id);
         }
@@ -37,12 +44,24 @@ namespace mc {
             return code::Func<uint32_t, 0x024CFFC4, Item*>()(this);
         }
 
+        void setIconName(const mstd::wstring& name) {
+            code::Func<void, 0x024b2b90, Item*, const mstd::wstring&>()(this, name);
+        }
+
+        void setAllowOffhand(bool allow) {
+            code::Func<void, 0x024b63bc, Item*, bool>()(this, allow);
+        }
+
         bool isHandEquipped() {
             return code::Func<uint8_t, 0x024D0030, Item*>()(this);
         }
 
         static Item* byId(int id) {
             return code::Func<Item*, 0x02486698, int>()(id);
+        }
+
+        static void registerItem(int id, const ResourceLocation& loc, Item* item) {
+            code::Func<void, 0x24B3D60, int, const ResourceLocation&, Item*>()(id, loc, item);
         }
 
         int getId() {
@@ -69,15 +88,8 @@ namespace mc {
         uint32_t field_0x44;
         uint32_t field_0x48;
         uint32_t field_0x4C;
-        uint32_t field_0x50;
-        uint32_t field_0x54;
-        uint32_t field_0x58;
-        uint32_t field_0x5C;
-        uint32_t field_0x60;
-        uint32_t field_0x64;
-        uint32_t field_0x68;
-        uint32_t field_0x6C;
+        mstd::wstring iconName;
         uint32_t field_0x70;
-        uint32_t field_0x74;
+        void* vtbl;
     };
 }

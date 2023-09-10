@@ -21,18 +21,19 @@ public:
         _module->addModuleToSettings((new Module(L"Target Entities", Module::Type::MODULE))->toggleState());
         _module->addModuleToSettings((new Module(L"Target Players", Module::Type::MODULE))->toggleState());
         _module->addModuleToSettings((new Module(L"Target Spectators", Module::Type::MODULE)));
+
+        selected = nullptr;
     }
 
-    static void aim() {
+    static void selectEntity() {
         Aimbot* aimbot = (Aimbot*) staticAimbot;
         if (!aimbot->getModule()->getState()) return;
-        mc::Entity* nearest = nullptr;
+
         mc::Minecraft* minecraft = mc::Minecraft::getInstance();
-        if (!minecraft) return;
         mc::LocalPlayer* lPlayer = minecraft->thePlayer;
-        if (!lPlayer) return;
-        mc::Level* level = lPlayer->lvl;
-        if (!level) return;
+        mc::Level* level = lPlayer->lvl;    
+
+        mc::Entity* nearest = nullptr;
 
         if (aimbot->shouldTargetPlayers()) {
             for (mc_boost::shared_ptr<mc::Player>& player : level->players) {
@@ -78,14 +79,28 @@ public:
             }
         }
 
+        aimbot->setSelectedEntity(nearest);
+    }
+
+    static void aim() {
+        Aimbot* aimbot = (Aimbot*) staticAimbot;
+        if (!aimbot->getModule()->getState()) return;
+        mc::Minecraft* minecraft = mc::Minecraft::getInstance();
+        if (!minecraft) return;
+        mc::LocalPlayer* lPlayer = minecraft->thePlayer;
+        if (!lPlayer) return;
+        mc::Level* level = lPlayer->lvl;
+        if (!level) return;    
+        mc::Entity* nearest = aimbot->getSelectedEntity();
+
         if (nearest) {
             if (nearest->position.distance(lPlayer->position) >= aimbot->getMaxDistance()) return;
-            double diffX = nearest->position.x - lPlayer->position.x;
+            double diffX =  nearest->position.x - lPlayer->position.x;
             double diffY = (nearest->position.y + nearest->getEyeHeight()) - (lPlayer->position.y + lPlayer->getEyeHeight());
-            double diffZ = nearest->position.z - lPlayer->position.z;
-            double dist = sqrt(pow(diffX, 2) + pow(diffZ, 2));
-            float yaw =   (float)   atan2(diffZ, diffX) * (180.0 / M_PI) - 90.0f;
-		    float pitch = (float) (-atan2(diffY, dist)) * (180.0 / M_PI);
+            double diffZ =  nearest->position.z - lPlayer->position.z;
+            double dist  =  sqrt(pow(diffX, 2) + pow(diffZ, 2));
+            float yaw    = (float)   atan2(diffZ, diffX) * (180.0 / M_PI) - 90.0f;
+		    float pitch  = (float) (-atan2(diffY, dist)) * (180.0 / M_PI);
 
             if (isnan(yaw)   || isinf(yaw))   yaw   = 0.0f;
             if (isnan(pitch) || isinf(pitch)) pitch = 0.0f;
@@ -117,11 +132,20 @@ public:
         return maxDistance;
     }
 
+    void setSelectedEntity(mc::Entity* entity) {
+        selected = entity;
+    }   
+
+    mc::Entity* getSelectedEntity() {
+        return selected;
+    }
+
 private:
     Module* _module;
     bool targetPlayers;
     bool targetEntities;
     float maxDistance;
+    mc::Entity* selected;
 };
 
 #endif

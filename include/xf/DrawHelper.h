@@ -28,7 +28,7 @@ namespace xf {
                 mc::GlStateManager::disableFog();
             }
 
-            static void DisplayText(mc::Font* font, mstd::wstring const & text, float size, float x, float y, uint32_t color = 0xFFFFFFFF, bool normal = true) {
+            static void DisplayText(mc::Font* font, const mstd::wstring& text, float size, float x, float y, uint32_t color = 0xFFFFFFFF, bool normal = true) {
                 mc::GlStateManager::enableTexture();
                 mc::GlStateManager::pushMatrix();
                 mc::GlStateManager::translatef(x, y, 0);

@@ -12,14 +12,6 @@
 
 void* staticClient;
 
-template<typename... Args>
-void mc__printf(const wchar_t* x, Args... args) {
-    if (!mc::Minecraft::getInstance()->thePlayer) return;
-    wchar_t temp[0x80];
-    mc_swprintf(temp, 0x80, x, args...);
-    mc::Minecraft::getInstance()->gui->addMessage(temp, 0, 0, 0, 0, 0);
-}
-
 class Client {
 public:
     Client(const wchar_t* name) {

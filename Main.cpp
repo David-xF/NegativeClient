@@ -13,23 +13,22 @@
 
 #include <minecraft/mc.h>
 
-#include "Client/Client.h"
-#include "Client/Module.h"
-#include "Client/ESP.h"
-#include "Client/CustomSky.h"
 #include "Client/Aimbot.h"
 #include "Client/AntiKick.h"
-#include "Client/Killaura.h"
-#include "Client/Jesus.h"
-#include "Client/Scaffold.h"
-#include "Client/Flight.h"
-#include "Client/Keystrokes.h"
 #include "Client/ChestESP.h"
+#include "Client/Client.h"
+#include "Client/CustomSky.h"
+#include "Client/ESP.h"
+#include "Client/Flight.h"
+#include "Client/FofBypass.h"
+#include "Client/Jesus.h"
+#include "Client/Keystrokes.h"
+#include "Client/Killaura.h"
+#include "Client/Module.h"
+#include "Client/Scaffold.h"
 
 #include <xf/String.h>
 #include <xf/Benchmark.h>
-
-#define CURRENT_VERSION_BUILD "0.1.0-WIP"
 
 void init() {
     InitTCPGecko();
@@ -47,7 +46,7 @@ void init() {
 }
 
 char n = 0;
-DECL_FUNCTION(void, RenderHitbox, void* renderer, const mc_boost::shared_ptr<mc::Entity>& ref, uint32_t unk, float x, float y, float z, float a, float b) {
+DECL_FUNCTION(void, renderHitbox__22EntityRenderDispatcherFRQ2_5boost25shared_ptr__tm__8_6EntitydN22fT5i, void* renderer, const mc_boost::shared_ptr<mc::Entity>& ref, uint32_t unk, float x, float y, float z, float a, float b) {
     ESP::draw(renderer, ref, unk, x, y, z, a, b);
 }
 
@@ -78,40 +77,58 @@ DECL_HOOK(onFrameInMenu, void) {
     Jesus::onTick();
 }
 
-DECL_FUNCTION(void, RenderSky, void* renderer, float f) {
-    if (CustomSky::draw()) real_RenderSky(renderer, f);
+DECL_FUNCTION(void, renderSky__13LevelRendererFf, void* renderer, float f) {
+    if (CustomSky::draw()) real_renderSky__13LevelRendererFf(renderer, f);
 }
 
-DECL_FUNCTION(void, LocalPlayerTickHeadTurn, mc::LocalPlayer* lPlayer, float yaw, float pitch) {
-    real_LocalPlayerTickHeadTurn(lPlayer, yaw, pitch);
-}
-
-int test__M(int amt) {
-    int m = 0;
-    for (int i = 0; i < amt; i++) {
-        m = i * 20 + i - (i * 3);
+int WriteCallback(char* contents, int size, int nmemb, xf::Vector<uint8_t>* userp) {
+    for (int i = 0; i < (size * nmemb); i++) {
+        userp->push_back(contents[i]);
     }
-
-    return m;
+    return size*nmemb;
 }
 
-DECL_FUNCTION(void, LocalPlayerTick, mc::LocalPlayer* lPlayer) {
+void testCurl() {
+    void* curl = curl_easy_init();
+    if (curl) {
+        xf::Vector<uint8_t> data;
+        curl_easy_setopt(curl, CURLOption::CURLOPT_URL, "http://cdn.discordapp.com/attachments/1139349689087574066/1149032493467574384/jujutsu-kaisen-stream-cover-repX7K4JuFCsuNLaimSSlxjaOomIlZQw_220x330.jpeg");
+        curl_easy_setopt(curl, CURLOption::CURLOPT_WRITEFUNCTION, (void*) WriteCallback);
+        curl_easy_setopt(curl, CURLOption::CURLOPT_FILE, &data);
+        int res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+        mc_printf(L"Bytes received: %d", data.getSize());
+    } else {
+        mc_printf(L"CURL Error [curl_easy_init() failed]");
+    }
+}
+
+DECL_FUNCTION(void, tick__11LocalPlayerFv, mc::LocalPlayer* lPlayer) {
     Flight::onTick(true);
     KillAura::onTick(true);
-    real_LocalPlayerTick(lPlayer);
+    real_tick__11LocalPlayerFv(lPlayer);
     KillAura::onTick(false);
     Flight::onTick(false);
 
+    Aimbot::selectEntity();
+
     Scaffold::onTick();
+
+    static bool wasStarted = false;
+    if (!wasStarted) {
+        uint64_t t = xf::Benchmark::measure(testCurl, xf::T_UNIT::MILLI);
+        mc_printf(L"It Took: %ld Milliseconds", t);
+        wasStarted = true;
+    }
 }
 
-DECL_FUNCTION(void, HandleDisconnect, mc::ClientPacketListener* listener, mc_boost::shared_ptr<mc::DisconnectPacket> const & packet) {
-    if (AntiKick::onKick(packet->reason)) real_HandleDisconnect(listener, packet);
+DECL_FUNCTION(void, handleDisconnect__20ClientPacketListenerFQ2_5boost37shared_ptr__tm__19_16DisconnectPacket, mc::ClientPacketListener* listener, const mc_boost::shared_ptr<mc::DisconnectPacket>& packet) {
+    if (AntiKick::onKick(packet->reason)) real_handleDisconnect__20ClientPacketListenerFQ2_5boost37shared_ptr__tm__19_16DisconnectPacket(listener, packet);
 }
 
-DECL_FUNCTION(void, SendPosition, mc::LocalPlayer* lPlayer) {
+DECL_FUNCTION(void, sendPosition__11LocalPlayerFv, mc::LocalPlayer* lPlayer) {
     Scaffold::updatePos(true);
-    real_SendPosition(lPlayer);
+    real_sendPosition__11LocalPlayerFv(lPlayer);
     Scaffold::updatePos(false);
 }
 
@@ -119,9 +136,18 @@ DECL_HOOK(ChestRenderer_render, void* renderer, const mc_boost::shared_ptr<uint3
     ChestESP::draw(x, y, z);
 }
 
-DECL_FUNCTION(uint32_t, LiquidBlock_getClip, void) {
+DECL_FUNCTION(uint32_t, getClipAABB__11LiquidBlockFPC10BlockStateP11LevelSourceRC8BlockPos, void) {
     Jesus* jesus = (Jesus*) staticJesus;
     return jesus->getPtr()[0];
+}
+
+DECL_FUNCTION(bool, IsInPublicJoinableGame__19CGameNetworkManagerFv, void* _this) {
+    FriendsOfFriendsBypass* fofBypass = (FriendsOfFriendsBypass*) staticFofBypass;
+    if (fofBypass->getModule()->getState()) {
+        return true;
+    } else {
+        return real_IsInPublicJoinableGame__19CGameNetworkManagerFv(_this);
+    }
 }
 
 int c_main(void*) {
@@ -199,16 +225,19 @@ int c_main(void*) {
     });
     PlayerPage->addModuleToVector(changeNNID);
 
+    FriendsOfFriendsBypass* fofBypass = new FriendsOfFriendsBypass();
+    MiscPage->addModuleToSettings(fofBypass->getModule());
+
     HOOK(0x02D9CAD0, onFrameInGame, 0);
     HOOK(0x02D9C8B0, onFrameInMenu, 0);
     HOOK(0x02FE3224, ChestRenderer_render, 0);
-    REPLACE(0x031BC7E0, 0x031BE4F8, RenderSky);
-    REPLACE(0x031e55d4, 0x031E7534, SendPosition);
-    REPLACE(0x030F9784, 0x030F9E14, RenderHitbox);
-    REPLACE(0x031e3a80, 0x031e50e4, LocalPlayerTick);
-    REPLACE(0x03052720, 0x03052854, HandleDisconnect);
-    REPLACE(0x025A963C, 0x025A9648, LiquidBlock_getClip);
-    REPLACE(0x031ec874, 0x031EC9F0, LocalPlayerTickHeadTurn);
+    REPLACE(0x031BC7E0, 0x031BE4F8, renderSky__13LevelRendererFf);
+    REPLACE(0x031e55d4, 0x031E7534, sendPosition__11LocalPlayerFv);
+    REPLACE(0x030F9784, 0x030F9E14, renderHitbox__22EntityRenderDispatcherFRQ2_5boost25shared_ptr__tm__8_6EntitydN22fT5i);
+    REPLACE(0x031e3a80, 0x031e50e4, tick__11LocalPlayerFv);
+    REPLACE(0x03052720, 0x03052854, handleDisconnect__20ClientPacketListenerFQ2_5boost37shared_ptr__tm__19_16DisconnectPacket);
+    REPLACE(0x025A963C, 0x025A9648, getClipAABB__11LiquidBlockFPC10BlockStateP11LevelSourceRC8BlockPos);
+    REPLACE(0x02D5731C, 0x02D573A0, IsInPublicJoinableGame__19CGameNetworkManagerFv);
     writeMem(0x030FA014, 0x2C090001);
     return 0;
 }
