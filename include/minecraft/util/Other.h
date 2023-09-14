@@ -49,7 +49,7 @@ wchar_t* charToWChar(const char* str, int length = 0) {
 			found = true;
 			length--;
 		}
-		if (length >= 250) return (wchar_t*) u"";
+		if (length >= 250) return (wchar_t*) L"";
 	}
 
 	wchar_t* newStr = _new<wchar_t>(length + 1);
@@ -75,4 +75,31 @@ int isnan(double x) {
     ieee754.f = x;
     return ( (unsigned)(ieee754.u >> 32) & 0x7fffffff ) +
            ( (unsigned)ieee754.u != 0 ) > 0x7ff00000;
+}
+
+char* toCStr(float input, int decimalPlaces = 5) {
+	uint32_t a0 = *(uint32_t*) &input;
+    bool isNegative = (a0 & 0x80000000) == 0x80000000;
+    if (isNegative) a0 -= 0x80000000;
+    float a1 = *(float*) &a0;
+	uint32_t multip = 1;
+	for (int i = 0; i < decimalPlaces; i++) multip *= 10;
+    uint32_t a = static_cast<uint32_t>(a1 * mc::toFloat(multip));
+    uint32_t a_dec = a % multip;
+    a = (a - a_dec) / multip;
+    wchar_t strTemp[0x20];
+    if (isnan(input)) {
+        mc_swprintf(strTemp, 0x20, L"NaN");
+	} else if (isinf(input)) {
+		mc_swprintf(strTemp, 0x20, L"Inf"); 
+	} else if (isNegative) {
+		wchar_t strTemp2[0x20];
+		mc_swprintf(strTemp2, 0x20, L"-%d.%s0%dd", a, "%", decimalPlaces);
+        mc_swprintf(strTemp, 0x20, strTemp2, a_dec);
+    } else {
+		wchar_t strTemp2[0x20];
+		mc_swprintf(strTemp2, 0x20, L"%d.%s0%dd", a, "%", decimalPlaces);
+        mc_swprintf(strTemp, 0x20, strTemp2, a_dec);
+    }
+    return wcharToChar(strTemp, 0x20);
 }

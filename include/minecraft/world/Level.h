@@ -41,6 +41,10 @@ namespace mc {
             return code::Func<bool, 0x0256767C, Level*, const BlockPos&, struct Direction*>()(this, pos, dir);
         }
 
+        void getPlayerByName(const mc_boost::shared_ptr<struct Player>& player, const mstd::wstring& name) {
+            code::Func<void, 0x02569ae4, Level*, const mc_boost::shared_ptr<struct Player>&, const mstd::wstring&>()(this, player, name);
+        }
+
 		uint32_t field_0x0;
         uint32_t field_0x4;
         uint32_t field_0x8;

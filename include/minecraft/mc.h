@@ -4,6 +4,7 @@
 
 #include "client/app/CInput.h"
 #include "client/app/CMinecraftApp.h"
+#include "client/app/ConsoleUIController.h"
 #include "client/app/CProfile.h"
 #include "client/app/Options.h"
 #include "client/app/System.h"
@@ -94,6 +95,9 @@
 #include "util/SoundEvent.h"
 #include "util/unordered_map.h"
 #include "util/Vec3.h"
+#include "util/VTable_Item.h"
+#include "util/VTable.h"
+
 
 #include "world/gamemode/ServerPlayerGameMode.h"
 

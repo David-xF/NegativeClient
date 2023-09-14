@@ -18,13 +18,15 @@ uint32_t branchTo(uint32_t origin, void* to) {
 }
 
 xf::Vector<void**> real_instructions;
-const int MaxTest = 0x2000;
+const int MaxTest = 0x100;
 int __test_index = 0;
 uint32_t instructionBuffer[MaxTest];
-void* setupRealInstructions(uint32_t* buffer) {
+void* setupRealInstructions(uint32_t* buffer, uint32_t startAddr) {
     uint32_t endFor = (uint32_t) &instructionBuffer[__test_index];
     for (int i = 0; i < buffer[0] + 1; i++) {
-        writeMem(endFor + (i * 4), buffer[1 + i]);
+        uint32_t writeAddr = endFor + (i * 4);
+        if (buffer[1 + i] == 0xFFFFFFFF) writeMem(writeAddr, branchTo(writeAddr, (void*) (startAddr + 4)));
+        else                             writeMem(writeAddr, buffer[1 + i]);
     }
 
     __test_index += (buffer[0] + 1);
@@ -32,12 +34,11 @@ void* setupRealInstructions(uint32_t* buffer) {
     return (void*) (endFor);
 }
 
-void* safeInstructions(uint32_t startFunction, uint32_t nextFunction) {
+void* safeInstructions(uint32_t startFunction) {
     xf::Vector<uint32_t> instructions;
-    for (uint32_t i = startFunction; i < nextFunction; i += 4) {
-        instructions.push_back(code::Mem(i).as<uint32_t>());
-    }
-
+    instructions.push_back(code::Mem(startFunction).as<uint32_t>());
+    instructions.push_back(0xFFFFFFFF);
+   
     uint32_t* ret = new uint32_t[instructions.getSize() + 1];
     int i = 1;
     for (uint32_t t : instructions) {
@@ -45,7 +46,7 @@ void* safeInstructions(uint32_t startFunction, uint32_t nextFunction) {
     }
 
     ret[0] = instructions.getSize();
-    return setupRealInstructions(ret);
+    return setupRealInstructions(ret, startFunction);
 }
 
 #define DECL_HOOK(func, ...) \
@@ -67,16 +68,16 @@ void _TEST(uint32_t addr, uint32_t funcPtr, int offset) {
 #define HOOK(addr, func, offset) \
     _TEST(addr, (uint32_t) hook_##func, offset);
     
-#define REPLACE(sAddr, nAddr, func) REPLACE_EX(sAddr, nAddr, real_##func, my_##func, func, real_instructions)
-#define REPLACE_EX(sAddr, nAddr, original_func, replace_func, func, ins_list) \
-    auto lambda_##func = [&]() {                                              \
-        void* _instructions = safeInstructions(sAddr, nAddr);                 \
-        writeMem(sAddr, branchTo(sAddr, (void*) &(replace_func)));            \
-        void** __data = (void**) new uint32_t[2];                             \
-        __data[0] = (void*) &(original_func);                                 \
-        __data[1] = _instructions;                                            \
-        ins_list.push_back(__data);                                           \
-    };                                                                        \
+#define REPLACE(sAddr, func) REPLACE_EX(sAddr, real_##func, my_##func, func, real_instructions)
+#define REPLACE_EX(sAddr, original_func, replace_func, func, ins_list) \
+    auto lambda_##func = [&]() {                                       \
+        void* _instructions = safeInstructions(sAddr);                 \
+        writeMem(sAddr, branchTo(sAddr, (void*) &(replace_func)));     \
+        void** __data = (void**) new uint32_t[2];                      \
+        __data[0] = (void*) &(original_func);                          \
+        __data[1] = _instructions;                                     \
+        ins_list.push_back(__data);                                    \
+    };                                                                 \
     lambda_##func();                                                         
 
 /*

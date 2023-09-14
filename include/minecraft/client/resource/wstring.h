@@ -12,7 +12,7 @@ namespace mstd {
 
         wstring() = default;
         
-        const wchar_t* c_str() {
+        const wchar_t* c_str() const {
             return (length > 7) ? pointer : str;
         }
 

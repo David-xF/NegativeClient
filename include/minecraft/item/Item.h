@@ -90,6 +90,6 @@ namespace mc {
         uint32_t field_0x4C;
         mstd::wstring iconName;
         uint32_t field_0x70;
-        void* vtbl;
+        struct VTable_Item* vtbl;
     };
 }
