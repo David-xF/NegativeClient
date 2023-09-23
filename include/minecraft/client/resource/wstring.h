@@ -16,10 +16,14 @@ namespace mstd {
             return (length > 7) ? pointer : str;
         }
 
-        uint32_t unk_0x0;    // 0
-        wchar_t str[8];     // 4
-        wchar_t* pointer;   // 14
-        uint32_t length; // 18
-        uint32_t length2;    // 1C
+        const wstring& assign(const wchar_t* _str, int _length) {
+            return code::Func<const mstd::wstring&, 0x030E8BC4, wstring*, const wchar_t*, int>()(this, _str, _length);
+        }
+
+        uint32_t unk_0x0; // 0x00
+        wchar_t str[8];   // 0x04
+        wchar_t* pointer; // 0x14
+        uint32_t length;  // 0x18
+        uint32_t length2; // 0x1C
     };
 }

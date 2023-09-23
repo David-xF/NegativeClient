@@ -98,7 +98,6 @@
 #include "util/VTable_Item.h"
 #include "util/VTable.h"
 
-
 #include "world/gamemode/ServerPlayerGameMode.h"
 
 #include "world/Level.h"

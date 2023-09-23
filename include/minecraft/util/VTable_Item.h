@@ -3,17 +3,18 @@
 #include "VTable.h"
 
 #include "../client/resource/shared_ptr.h"
+#include "../util/InteractionHand.h"
 
 namespace mc {
-    struct VTable_Item {
+    struct VTable_Item : public VTable {
     public:
         MC_VFUNC(void, struct Item, getDefaultInstance__Fv);
         MC_VFUNC(void, struct Item, verifyTagAfterLoad__FP11CompoundTag, struct CompoundTag*);
         MC_VFUNC(void, struct Item, GetUseTooltip__FRC21ItemTooltipDataHolder, const struct ItemToolTipDataHolder&);
         MC_VFUNC(void, struct Item, __dt__Fv, bool);
-        MC_VFUNC(void, struct Item, useOn__FQ2_5boost25shared_ptr__tm__8_6PlayerP5LevelRC8BlockPosQ2_15InteractionHand16EInteractionHandPC9DirectionfN26b);
-        MC_VFUNC(void, struct Item, getDestroySpeed__F35not_null_ptr__tm__15_12ItemInstancePC10BlockState);
-        MC_VFUNC(void, struct Item, TestUse__FP5LevelQ2_5boost25shared_ptr__tm__8_6PlayerQ2_15InteractionHand16EInteractionHand);
+        MC_VFUNC(void, struct Item, useOn, const mc_boost::shared_ptr<struct Player>&, const BlockPos&, InteractionHand::EInteractionHand, struct Direction*, float, float, float, bool);
+        MC_VFUNC(void, struct Item, getDestroySpeed, const mc_boost::shared_ptr<struct ItemInstance>&, struct BlockState*);
+        MC_VFUNC(void, struct Item, TestUse, struct Level*, const mc_boost::shared_ptr<struct Player>&, InteractionHand::EInteractionHand);
         MC_VFUNC(void, struct Item, use__FP5LevelQ2_5boost25shared_ptr__tm__8_6PlayerQ2_15InteractionHand16EInteractionHand);
         MC_VFUNC(void, struct Item, finishUsingItem__F35not_null_ptr__tm__15_12ItemInstanceP5LevelQ2_5boost33shared_ptr__tm__15_12LivingEntity);
         MC_VFUNC(void, struct Item, getMaxStackSize__Fv);

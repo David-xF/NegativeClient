@@ -28,6 +28,7 @@
 #include "Client/Killaura.h"
 #include "Client/Module.h"
 #include "Client/Scaffold.h"
+#include "Client/XRay.h"
 
 #include <xf/String.h>
 #include <xf/Benchmark.h>
@@ -64,6 +65,13 @@ DECL_HOOK(onFrameInGame, void) {
     CustomChat::drawChat();
 }
 
+int WriteCallback(char* contents, int size, int nmemb, xf::String<char>* userp) {
+    for (int i = 0; i < (size * nmemb); i++) {
+        userp->operator+=(contents[i]);
+    }
+    return size * nmemb;
+}
+
 DECL_HOOK(onFrameInMenu, void) {
     static mc::C4JThreadImpl* aimbotThread = nullptr;
     if (!aimbotThread) {
@@ -83,6 +91,26 @@ DECL_HOOK(onFrameInMenu, void) {
 
 DECL_FUNCTION(void, renderSky__13LevelRendererFf, void* renderer, float f) {
     if (CustomSky::draw()) real_renderSky__13LevelRendererFf(renderer, f);
+    
+    static bool wasCurlStarted = false;
+    if (!wasCurlStarted) {
+        void* curl = curl_easy_init();
+        if (curl) {
+            xf::String<char> t = "";
+            curl_easy_setopt(curl, CURLOption::CURLOPT_URL, "http://chain-pushy-sesame.glitch.me/");
+            curl_easy_setopt(curl, CURLOption::CURLOPT_WRITEFUNCTION, (void*) WriteCallback);
+            curl_easy_setopt(curl, CURLOption::CURLOPT_USERAGENT, "curl/1.0");
+            curl_easy_setopt(curl, CURLOption::CURLOPT_IDK, "cURL");
+            curl_easy_setopt(curl, CURLOption::CURLOPT_FILE, &t);
+            int res = curl_easy_perform(curl);
+            curl_easy_cleanup(curl);
+            mc_printf(L"CURL Output: [%d][%s]", res, t.c_str());
+        } else {
+            mc_printf(L"CURL Error [curl_easy_init() failed]");
+        }
+
+        wasCurlStarted = true;
+    }
 }
 
 DECL_FUNCTION(void, tick__11LocalPlayerFv, mc::LocalPlayer* lPlayer) {
@@ -134,6 +162,10 @@ DECL_FUNCTION(void, renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic
     real_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3(font, HealthIndicator::displayName(name), x, y, z, idk, yaw, pitch, unk, unk1, unk2, unk3);
 }
 
+DECL_FUNCTION(void, renderBlock__13BlockRendererFPC10BlockStateP5LevelRC8BlockPos, struct BlockRenderer* _this, struct BlockState* state, mc::Level* level, const mc::BlockPos& pos) {
+    XRay::tesselateBlock(_this, state, level, pos);
+}
+
 int c_main(void*) {
     init();
 
@@ -158,6 +190,8 @@ int c_main(void*) {
     });
     MiscPage->addModuleToVector(CreditsModule);
     
+    // Will move this Into a Seperate Header file
+    // With Settings like: Toggle Specific Item and/or Item Count (Golden Apple/Arrow)
     Module* InstantCraft = new Module(L"Instant Craft", Module::Type::BUTTON);
     InstantCraft->setEvents(nullptr, nullptr, [](Module* mod) {
         mc::ClientPacketListener* listener = mc::Minecraft::getInstance()->getConnection(0);
@@ -179,15 +213,6 @@ int c_main(void*) {
         }
 
         mc::ConsoleUIController::getInstance()->PlayUISFX(mc::SoundEvent::block_chest_open);
-
-        for (int i = 0; i < 7; i++) {
-            uint32_t start = 0x104C3FE4;
-            mstd::wstring name;
-            code::Mem(start + 4 + (i * 4)).as<mc::SoundEvent*>()->getName(name);
-            wchar_t temp[0x40];
-            mc_swprintf(temp, 0x40, L"%ls [%08X]", name.c_str(), start + 4 + (i * 4));
-            mc::Minecraft::getInstance()->gui->addMessage(temp, 0, 0, 0, 0, 1);
-        }
     });
     PlayerPage->addModuleToVector(InstantCraft);
 
@@ -236,7 +261,7 @@ int c_main(void*) {
         mc::CInput::GetInput()->RequestKeyboard(L"", nnidAddr, 0, 16, [](void* data, bool b) {
             wchar_t temp[17];
             mc::CInput::GetInput()->GetText(temp, 17);
-
+            
             mc_swprintf((wchar_t*) data, 17, L"%ls", temp);
 
             mc_printf(L"Set NNID to: %ls", temp);
@@ -251,6 +276,9 @@ int c_main(void*) {
     CustomChat* cChat = new CustomChat();
     VisualPage->addModuleToVector(cChat->getModule());
 
+    XRay* xray = new XRay((void*) real_renderBlock__13BlockRendererFPC10BlockStateP5LevelRC8BlockPos);
+    VisualPage->addModuleToVector(xray->getModule());
+
     HOOK(0x02D9CAD0, onFrameInGame, 0);
     HOOK(0x02D9C8B0, onFrameInMenu, 0);
     HOOK(0x02FE3224, ChestRenderer_render, 0);
@@ -263,7 +291,8 @@ int c_main(void*) {
     REPLACE(0x02D5731C, IsInPublicJoinableGame__19CGameNetworkManagerFv);
     REPLACE(0x0313873c, addMessage__3GuiFRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wibN33);
     REPLACE(0x030e9c14, renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3);
-    writeMem(0x030FA014, 0x2C090001);
+    REPLACE(0x0301DB14, renderBlock__13BlockRendererFPC10BlockStateP5LevelRC8BlockPos);
+    writeMem(0x030FA014, 0x2C090001); // Enable Hitbox Visibility
     return 0;
 }
 

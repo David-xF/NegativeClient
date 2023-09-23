@@ -70,16 +70,17 @@ public:
         int entrys = cChat->getSize();
         if (entrys > 7) entrys = 7;
         
-        if (entrys > 0) {
-            int longestWidth = 0;
-            for (int i = 0; i < entrys; i++) {
-                int width = font->width(cChat->at(i).message);
-                if (width > longestWidth) longestWidth = width;
-            }
-
-            int totalHeight = (entrys * (2 + FONT_CHAR_HEIGHT));
-            xf::GUI::DrawHelper::DisplayBox2D(0, HEIGHT - 130 - totalHeight - 5, 10 + longestWidth, totalHeight + 10, 0x30, 0x888888);
-        }
+        // Background
+        // if (entrys > 0) {
+        //     int longestWidth = 0;
+        //     for (int i = 0; i < entrys; i++) {
+        //         int width = font->width(cChat->at(i).message);
+        //         if (width > longestWidth) longestWidth = width;
+        //     }
+        // 
+        //     int totalHeight = (entrys * (2 + FONT_CHAR_HEIGHT));
+        //     xf::GUI::DrawHelper::DisplayBox2D(0, HEIGHT - 130 - totalHeight - 5, 10 + longestWidth, totalHeight + 10, 0x30, 0x888888);
+        // }
 
         for (int i = 0; i < entrys; i++) {
             float t = mc::toFloat(cTime - cChat->at(i).addTime) / 1000.0f;

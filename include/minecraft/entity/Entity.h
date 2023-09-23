@@ -234,7 +234,7 @@ namespace mc {
 		uint32_t field_0x33C;
 		uint32_t field_0x340;
 		uint32_t field_0x344;
-		void* vtable;
+		struct VTable_Entity* vtable;
 		uint32_t field_0x34C;
     };
 }

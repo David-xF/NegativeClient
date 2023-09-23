@@ -1,7 +1,6 @@
 #pragma once
 
 #include <code/tcpgecko.h>
-#include <cstdio>
 
 EXPORT_DECL(void, OSScreenInit, void);
 EXPORT_DECL(void, OSScreenShutdown, void);

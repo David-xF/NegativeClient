@@ -15,6 +15,8 @@ namespace mc {
             return code::Func<Item*, 0x02164810, BowItem*, const mc_boost::shared_ptr<struct ItemInstance>&, struct Level*, const mc_boost::shared_ptr<struct LivingEntity>&, int>()(this, instance, level, entity, idk);
         }
 
+        DEFINE_STATIC_VAR(struct VTable_Item*, vtbl, 0x10061554);
+
         uint32_t field_0x78;
         uint32_t field_0x7C;
         uint32_t field_0x80;
