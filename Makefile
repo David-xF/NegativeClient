@@ -41,9 +41,9 @@ INCLUDES	:=  include
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-CFLAGS	:=  -std=gnu17 -mrvl -mcpu=750 -meabi -mhard-float -ffast-math -fshort-wchar -fno-inline -funroll-loops -fdata-sections -ffunction-sections \
+CFLAGS	:=  -std=gnu17 -mrvl -nostdlib -mcpu=750 -meabi -mhard-float -ffast-math -fshort-wchar -fno-inline -funroll-loops -fdata-sections -ffunction-sections \
 		    -Os -D_GNU_SOURCE -Wno-unused-parameter -Wno-strict-aliasing $(INCLUDE)
-CXXFLAGS := -std=gnu++17 -mrvl -mcpu=750 -meabi -mhard-float -ffast-math -fshort-wchar -fno-inline -funroll-loops -fdata-sections -ffunction-sections \
+CXXFLAGS := -std=gnu++17 -mrvl -nostdlib -mcpu=750 -meabi -mhard-float -ffast-math -fshort-wchar -fno-inline -funroll-loops -fdata-sections -ffunction-sections \
 		    -Os -D_GNU_SOURCE -Wno-unused-parameter -Wno-strict-aliasing $(INCLUDE)
 ASFLAGS	:= -mregnames
 LDFLAGS	:= -nostartfiles -Wl,-Map,$(notdir $@).map,--gc-sections

@@ -146,6 +146,7 @@ void _TEST(uint32_t addr, uint32_t funcPtr, int offset) {
         asm volatile("lwz 0, 4(1)");                                 \
         asm volatile("mtlr 0");                                      \
         asm volatile("blr");                                         \
+        return res();                                                \
     }                                                                \
     res my_##name(__VA_ARGS__)
 
