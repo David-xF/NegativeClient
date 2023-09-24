@@ -28,6 +28,7 @@
 #include "Client/Killaura.h"
 #include "Client/Module.h"
 #include "Client/Scaffold.h"
+#include "Client/SeeNameTags.h"
 #include "Client/XRay.h"
 
 #include <xf/String.h>
@@ -166,6 +167,10 @@ DECL_FUNCTION(void, renderBlock__13BlockRendererFPC10BlockStateP5LevelRC8BlockPo
     XRay::tesselateBlock(_this, state, level, pos);
 }
 
+DECL_FUNCTION(bool, renderDebug__9MinecraftSFv) {
+    return ((SeeNameTags*) staticSeeNameTags)->getModule()->getState() ? true : real_renderDebug__9MinecraftSFv();
+}
+
 int c_main(void*) {
     init();
 
@@ -279,6 +284,9 @@ int c_main(void*) {
     XRay* xray = new XRay((void*) real_renderBlock__13BlockRendererFPC10BlockStateP5LevelRC8BlockPos);
     VisualPage->addModuleToVector(xray->getModule());
 
+    SeeNameTags* nameTags = new SeeNameTags();
+    VisualPage->addModuleToVector(nameTags->getModule());
+
     HOOK(0x02D9CAD0, onFrameInGame, 0);
     HOOK(0x02D9C8B0, onFrameInMenu, 0);
     HOOK(0x02FE3224, ChestRenderer_render, 0);
@@ -292,12 +300,13 @@ int c_main(void*) {
     REPLACE(0x0313873c, addMessage__3GuiFRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wibN33);
     REPLACE(0x030e9c14, renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3);
     REPLACE(0x0301DB14, renderBlock__13BlockRendererFPC10BlockStateP5LevelRC8BlockPos);
+    REPLACE(0x031B2B24, renderDebug__9MinecraftSFv);
     writeMem(0x030FA014, 0x2C090001); // Enable Hitbox Visibility
     return 0;
 }
 
 void _main() {
-    mc::C4JThreadImpl* thread = new mc::C4JThreadImpl(c_main, nullptr, "Loading Negative Client Assets", 0x200);
+    mc::C4JThreadImpl* thread = new mc::C4JThreadImpl(c_main, nullptr, "Loading Negative Client", 0x200);
     thread->Run();
     thread->SetDeleteOnExit(true);
 }

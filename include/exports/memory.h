@@ -2,6 +2,8 @@
 
 #include <code/tcpgecko.h>
 
+#include <malloc.h>
+
 #define MEMORY_ARENA_1          0
 #define MEMORY_ARENA_2          1
 #define MEMORY_ARENA_3          2
@@ -27,47 +29,6 @@ EXPORT_DECL(void, MEMFreeToExpHeap, int heap, void *ptr);
 
 static int mem1_heap = -1;
 static int bucket_heap = -1;
-void *__wrap_memalign(size_t align, size_t size) {
-    if (align < 4)
-        align = 4;
-
-    // pointer to a function resolve
-    return ((void * (*)(size_t, size_t))(*pMEMAllocFromDefaultHeapEx))(size, align);
-}
-
-void __wrap_free(void *p) {
-    // pointer to a function resolve
-    if(p != 0)
-        ((void (*)(void *))(*pMEMFreeToDefaultHeap))(p);
-}
-
-void * MEM2_alloc(unsigned int size, unsigned int align) {
-    return __wrap_memalign(align, size);
-}
-
-void MEM2_free(void *ptr) {
-    __wrap_free(ptr);
-}
-
-void * MEM1_alloc(unsigned int size, unsigned int align) {
-    if (align < 4)
-        align = 4;
-    return MEMAllocFromExpHeapEx(mem1_heap, size, align);
-}
-
-void MEM1_free(void *ptr) {
-    MEMFreeToExpHeap(mem1_heap, ptr);
-}
-
-void * MEMBucket_alloc(unsigned int size, unsigned int align) {
-    if (align < 4)
-        align = 4;
-    return MEMAllocFromExpHeapEx(bucket_heap, size, align);
-}
-
-void MEMBucket_free(void *ptr) {
-    MEMFreeToExpHeap(bucket_heap, ptr);
-}
 
 void InitMemoryFunctionPointers() {
     uint32_t coreinit_handle;
@@ -110,4 +71,122 @@ void memoryRelease(void) {
     MEMDestroyExpHeap(bucket_heap);
     MEMFreeToFrmHeap(MEMGetBaseHeapHandle(MEMORY_ARENA_FG_BUCKET), 3);
     bucket_heap = -1;
+}
+
+void *__wrap_malloc(size_t size)
+{
+    // pointer to a function resolve
+	return ((void * (*)(size_t))(*pMEMAllocFromDefaultHeap))(size);
+}
+
+void *__wrap_memalign(size_t align, size_t size)
+{
+    if (align < 4)
+        align = 4;
+
+    // pointer to a function resolve
+    return ((void * (*)(size_t, size_t))(*pMEMAllocFromDefaultHeapEx))(size, align);
+}
+
+void __wrap_free(void *p)
+{
+    // pointer to a function resolve
+    if(p != 0)
+        ((void (*)(void *))(*pMEMFreeToDefaultHeap))(p);
+}
+
+void *__wrap_calloc(size_t n, size_t size)
+{
+    void *p = __wrap_malloc(n * size);
+	if (p != 0) {
+		memset(p, 0, n * size);
+	}
+	return p;
+}
+
+size_t __wrap_malloc_usable_size(void *p)
+{
+    //! TODO: this is totally wrong and needs to be addressed
+	return 0x7FFFFFFF;
+}
+
+void *__wrap_realloc(void *p, size_t size)
+{
+    void *new_ptr = __wrap_malloc(size);
+	if (new_ptr != 0)
+	{
+		memcpy(new_ptr, p, __wrap_malloc_usable_size(p) < size ? __wrap_malloc_usable_size(p) : size);
+		__wrap_free(p);
+	}
+	return new_ptr;
+}
+
+//!-------------------------------------------------------------------------------------------
+//! reent versions
+//!-------------------------------------------------------------------------------------------
+void *__wrap__malloc_r(struct _reent *r, size_t size)
+{
+	return __wrap_malloc(size);
+}
+
+void *__wrap__calloc_r(struct _reent *r, size_t n, size_t size)
+{
+    return __wrap_calloc(n, size);
+}
+
+void *__wrap__memalign_r(struct _reent *r, size_t align, size_t size)
+{
+    return __wrap_memalign(align, size);
+}
+
+void __wrap__free_r(struct _reent *r, void *p)
+{
+    __wrap_free(p);
+}
+
+size_t __wrap__malloc_usable_size_r(struct _reent *r, void *p)
+{
+    return __wrap_malloc_usable_size(p);
+}
+
+void *__wrap__realloc_r(struct _reent *r, void *p, size_t size)
+{
+    return __wrap_realloc(p, size);
+}
+
+//!-------------------------------------------------------------------------------------------
+//! some wrappers
+//!-------------------------------------------------------------------------------------------
+void * MEM2_alloc(unsigned int size, unsigned int align)
+{
+    return __wrap_memalign(align, size);
+}
+
+void MEM2_free(void *ptr)
+{
+    __wrap_free(ptr);
+}
+
+void * MEM1_alloc(unsigned int size, unsigned int align)
+{
+    if (align < 4)
+        align = 4;
+    return MEMAllocFromExpHeapEx(mem1_heap, size, align);
+}
+
+void MEM1_free(void *ptr)
+{
+    MEMFreeToExpHeap(mem1_heap, ptr);
+}
+
+void * MEMBucket_alloc(unsigned int size, unsigned int align)
+{
+    if (align < 4)
+        align = 4;
+    return MEMAllocFromExpHeapEx(bucket_heap, size, align);
+}
+
+void MEMBucket_free(void *ptr)
+{
+    MEMFreeToExpHeap(bucket_heap, ptr);
 }
