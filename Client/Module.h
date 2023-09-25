@@ -167,8 +167,8 @@ public:
             if (pageVector[selectIndex]->isSlider()) {
                 Slider<>* _slider = (Slider<>*) pageVector[selectIndex]->getSlider();
                 ((void(*)(Slider<>*)) _slider->getEvent(0))(_slider);
+                return true;
             }
-            return true;
         } else if (pageIndex != -1) {
             if (pageVector[pageIndex]->left()) return true;
             if (pageVector[pageIndex]->getPageIndex() == -1) {

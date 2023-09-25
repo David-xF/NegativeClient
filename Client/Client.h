@@ -87,7 +87,7 @@ public:
         START_TIMED_BUTTONCHECK(buttons & VPAD_BUTTON_DOWN, mod->down(), buttons, 300, 20)
         ADD_TIMED_BUTTONCHECK(buttons & VPAD_BUTTON_UP,     mod->up())
         ADD_TIMED_BUTTONCHECK(buttons & VPAD_BUTTON_RIGHT,  openSettings(false, lastClickTime, lastTime))
-        ADD_TIMED_BUTTONCHECK(buttons & VPAD_BUTTON_LEFT,   mod->left())
+        ADD_TIMED_BUTTONCHECK(buttons & VPAD_BUTTON_LEFT,   if (!mod->left()) toggle())
         END_TIMED_BUTTONCHECK(openSettings(true, lastClickTime, lastTime))
 
         const float x = 25;
