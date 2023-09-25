@@ -29,6 +29,14 @@ namespace mc {
 			return code::Func<uint64_t, 0x026027a4>()();
 		}
 
+		bool hasEffect(struct MobEffect* effect) {
+			return code::Func<bool, 0x025781EC, LivingEntity*, struct MobEffect*>()(this, effect);
+		}
+
+		struct MobEffectInstance* getEffect(struct MobEffect* effect) {
+			return code::Func<struct MobEffectInstance*, 0x0257822c, LivingEntity*, struct MobEffect*>()(this, effect);
+		}
+
         uint32_t field_0x350;
 		uint32_t field_0x354;
 		uint32_t field_0x358;

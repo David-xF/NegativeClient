@@ -2,6 +2,24 @@
 
 #include <code/code.h>
 
+#define GET_LR(valName)                       \
+    uint32_t valName;                         \
+    asm volatile("mflr %0" : "=r" (valName)); 
+
+
+wchar_t* getEffectName(int id) {
+    const wchar_t* names[] = {
+        L"NULL", L"Speed", L"Slowness", L"Haste", L"Mining Fatigue", L"Strength", L"Instant Health", L"Instant Damage", L"Jump Boost", 
+        L"Nausea", L"Regeneration", L"Resistance", L"Fire Resistance", L"Water Breathing", L"Invisibility", L"Blindness", L"Night Vision",
+        L"Hunger", L"Weakness", L"Poison", L"Wither", L"Health Boost", L"Absorption", L"Saturation", L"Glowing", L"Levitation", L"Luck",
+        L"Bad Luck"
+    };
+
+    int size = sizeof(names) / sizeof(names[0]);
+    if (id >= size) return (wchar_t*) L"NULL";
+    return (wchar_t*) names[id % size];
+}
+
 void mc_wcscpy(const wchar_t* out, const wchar_t* in) {
 	code::Func<void, 0x0382C734, const wchar_t*, const wchar_t*>()(out, in);
 }

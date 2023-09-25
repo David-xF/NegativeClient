@@ -15,9 +15,8 @@ void* staticClient;
 class Client {
 public:
     Client(const wchar_t* name) {
-        const int maxNameSize = 0x20;
-        clientName = new wchar_t[maxNameSize];
-        memcpy(clientName, name, maxNameSize);
+        clientName = new wchar_t[mc_wcslen(name) + 1];
+        mc_wcscpy(clientName, name);
 
         staticClient = this;
         mod = new Module(L"Client", Module::Type::PAGE);
@@ -124,10 +123,17 @@ public:
                 );
             }
 
-            if (mod->getPageVector().getSize() > 0) {
-                mstd::wstring indicator;
-                if (mod->hasSettings()) indicator = L"[S]";
-                else                    indicator = L"[+]";
+            if (mod->getPageVector().getSize() > 0 || mod->isSlider()) {
+                mstd::wstring indicator = L"";
+                if (mod->isSlider()) {
+                    wchar_t t[0x40];
+                    Slider<>* slider = (Slider<>*) mod->getSlider();
+                    mstd::wstring(*drawFunc)(Slider<>*) = (mstd::wstring(*)(Slider<>*)) slider->getDrawFunc();
+                    mc_swprintf(t, 0x40, L"< %ls >", drawFunc(slider).c_str());
+                    indicator = t;    
+                }
+                else if (mod->hasSettings()) indicator = L"[S]";
+                else                         indicator = L"[+]";
                 xf::GUI::DrawHelper::DisplayText(font, indicator, 1, x + sizeX - font->width(indicator) - 4, y + 23 + yOffset, 0xFFFFFFFF, false);
             }
 

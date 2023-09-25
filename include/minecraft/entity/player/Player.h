@@ -79,6 +79,10 @@ namespace mc {
 			return code::Func<float, 0x0271b884, Player*>()(this);
 		}
 
+		float getCurrentItemAttackStrengthDelay() {
+			return code::Func<float, 0x02728794, Player*>()(this);
+		}
+
 		// void setItemSlot(EquipmentSlot const * slot, ItemInstance* item) {
 		// 	code::Func<void, 0x02725F70, Player*, EquipmentSlot const *, ItemInstance*>()(this, slot, item);
 		// }
@@ -167,7 +171,7 @@ namespace mc {
 		uint32_t field_0x770;
 		uint32_t field_0x774;
 		uint32_t field_0x778;
-		uint32_t field_0x77C;
+		struct CameraController* field_0x77C; // Is nullptr?
 		uint32_t field_0x780;
 		PlayerUID uuid;
 		PlayerUID uuid2;

@@ -41,10 +41,10 @@ INCLUDES	:=  include
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-CFLAGS	:=  -std=gnu17 -mrvl -nostdlib -mcpu=750 -meabi -mhard-float -ffast-math -fshort-wchar -fno-inline -funroll-loops -fdata-sections -ffunction-sections \
-		    -Os -D_GNU_SOURCE -Wno-unused-parameter -Wno-strict-aliasing $(INCLUDE)
-CXXFLAGS := -std=gnu++17 -mrvl -nostdlib -mcpu=750 -meabi -mhard-float -ffast-math -fshort-wchar -fno-inline -funroll-loops -fdata-sections -ffunction-sections \
-		    -Os -D_GNU_SOURCE -Wno-unused-parameter -Wno-strict-aliasing $(INCLUDE)
+CFLAGS	 :=  -std=gnu17 -mrvl -nostdlib -mcpu=750 -meabi -mhard-float -ffast-math -fshort-wchar -fno-inline -funroll-loops -fdata-sections -ffunction-sections \
+		      -Os -D_GNU_SOURCE $(INCLUDE)
+CXXFLAGS :=  -std=gnu++17 -mrvl -nostdlib -mcpu=750 -meabi -mhard-float -ffast-math -fshort-wchar -fno-inline -funroll-loops -fdata-sections -ffunction-sections \
+		      -Os -D_GNU_SOURCE $(INCLUDE)
 ASFLAGS	:= -mregnames
 LDFLAGS	:= -nostartfiles -Wl,-Map,$(notdir $@).map,--gc-sections
 
@@ -54,7 +54,7 @@ MAKEFLAGS += --no-print-directory
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:= -lm -lfat -lz -liosuhax -lgd
+LIBS	:= 
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing

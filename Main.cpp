@@ -49,7 +49,6 @@ void init() {
     memoryInitialize();
 }
 
-char n = 0;
 DECL_FUNCTION(void, renderHitbox__22EntityRenderDispatcherFRQ2_5boost25shared_ptr__tm__8_6EntitydN22fT5i, void* renderer, const mc_boost::shared_ptr<mc::Entity>& ref, uint32_t unk, float x, float y, float z, float a, float b) {
     ESP::draw(renderer, ref, unk, x, y, z, a, b);
 }
@@ -66,52 +65,27 @@ DECL_HOOK(onFrameInGame, void) {
     CustomChat::drawChat();
 }
 
-int WriteCallback(char* contents, int size, int nmemb, xf::String<char>* userp) {
-    for (int i = 0; i < (size * nmemb); i++) {
-        userp->operator+=(contents[i]);
-    }
-    return size * nmemb;
-}
+mc::Vec3 lPlayer_Position;
+float lPlayer_Yaw;
+float lPlayer_Pitch;
 
 DECL_HOOK(onFrameInMenu, void) {
     static mc::C4JThreadImpl* aimbotThread = nullptr;
     if (!aimbotThread) {
         aimbotThread = new mc::C4JThreadImpl([](void*) {
-            while (true) {
-                Aimbot::aim();
-            }
+            while (true) Aimbot::aim();
             return 0;
-        }, nullptr, "Aimbot Thread", 0x200);
+        }, nullptr, "Negative Client - General Purpose Thread", 0x200);
         aimbotThread->Run();
         aimbotThread->SetDeleteOnExit(true);
     }
 
-    Client::draw(true);
+    Client::draw(false);
     Jesus::onTick();
 }
 
-DECL_FUNCTION(void, renderSky__13LevelRendererFf, void* renderer, float f) {
+DECL_FUNCTION(void, renderSky__13LevelRendererFf, void* renderer, float f) {    
     if (CustomSky::draw()) real_renderSky__13LevelRendererFf(renderer, f);
-    
-    static bool wasCurlStarted = false;
-    if (!wasCurlStarted) {
-        void* curl = curl_easy_init();
-        if (curl) {
-            xf::String<char> t = "";
-            curl_easy_setopt(curl, CURLOption::CURLOPT_URL, "http://chain-pushy-sesame.glitch.me/");
-            curl_easy_setopt(curl, CURLOption::CURLOPT_WRITEFUNCTION, (void*) WriteCallback);
-            curl_easy_setopt(curl, CURLOption::CURLOPT_USERAGENT, "curl/1.0");
-            curl_easy_setopt(curl, CURLOption::CURLOPT_IDK, "cURL");
-            curl_easy_setopt(curl, CURLOption::CURLOPT_FILE, &t);
-            int res = curl_easy_perform(curl);
-            curl_easy_cleanup(curl);
-            mc_printf(L"CURL Output: [%d][%s]", res, t.c_str());
-        } else {
-            mc_printf(L"CURL Error [curl_easy_init() failed]");
-        }
-
-        wasCurlStarted = true;
-    }
 }
 
 DECL_FUNCTION(void, tick__11LocalPlayerFv, mc::LocalPlayer* lPlayer) {
@@ -159,8 +133,29 @@ DECL_FUNCTION(void, addMessage__3GuiFRCQ2_3std78basic_string__tm__58_wQ2_3std20c
     if (isDisabled) real_addMessage__3GuiFRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wibN33(gui, message, unk, unk1, unk2, unk3, unk4);
 }
 
+/*
+ * MUST BE DONE LIKE THIS IMPLEMENTATION OR THIS ERROR WILL APPEAR
+ * C:\Users\David\AppData\Local\Temp\ccoEOp99.s:2025: Error: symbol `_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3Start' is already defined
+ * C:\Users\David\AppData\Local\Temp\ccoEOp99.s:2097: Error: symbol `_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3' is already defined
+ * C:\Users\David\AppData\Local\Temp\ccoEOp99.s:2130: Error: symbol `_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3Found' is already defined
+ */
 DECL_FUNCTION(void, renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3, mc::Font* font, const mstd::wstring& name, float x, float y, float z, int idk, float yaw, float pitch, bool unk, bool unk1, int unk2, float unk3) {
-    real_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3(font, HealthIndicator::displayName(name), x, y, z, idk, yaw, pitch, unk, unk1, unk2, unk3);
+    mc::Player* player = HealthIndicator::getPlayer(name);
+    if (!player) {
+        real_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3(font, name, x, y, z, idk, yaw, pitch, unk, unk1, unk2, unk3);
+    } else {
+        float newY[] = {
+            y, y + 0.3f, y
+        };
+
+        int mode = HealthIndicator::getMode();
+        if (mode == 0) { // Inline
+            real_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3(font, HealthIndicator::displayName(name), x, y, z, idk, yaw, pitch, unk, unk1, unk2, unk3);
+        } else {
+            real_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3(font, name, x, newY[mode - 1], z, idk, yaw, pitch, unk, unk1, unk2, unk3);
+            real_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3(font, HealthIndicator::getHP(player), x, newY[mode    ], z, idk, yaw, pitch, unk, unk1, unk2, unk3);
+        }
+    }
 }
 
 DECL_FUNCTION(void, renderBlock__13BlockRendererFPC10BlockStateP5LevelRC8BlockPos, struct BlockRenderer* _this, struct BlockState* state, mc::Level* level, const mc::BlockPos& pos) {
@@ -306,7 +301,11 @@ int c_main(void*) {
 }
 
 void _main() {
-    mc::C4JThreadImpl* thread = new mc::C4JThreadImpl(c_main, nullptr, "Loading Negative Client", 0x200);
+    lPlayer_Position = {0, 0, 0};
+    lPlayer_Yaw      = 0;
+    lPlayer_Pitch    = 0;
+
+    mc::C4JThreadImpl* thread = new mc::C4JThreadImpl(c_main, nullptr, "Negative Client - Setup", 0x200);
     thread->Run();
     thread->SetDeleteOnExit(true);
 }

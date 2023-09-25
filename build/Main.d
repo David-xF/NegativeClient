@@ -75,6 +75,7 @@ Main.o: C:/Users/David/Documents/Workspace/NegativeClient/Main.cpp \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/network/server/PlayerList.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/rendering/buffer/BufferBuilder.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/rendering/buffer/BufferedImage.h \
+ C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/rendering/CameraController.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/rendering/Font.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/rendering/GlStateManager.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/rendering/Tesselator.h \
@@ -96,6 +97,7 @@ Main.o: C:/Users/David/Documents/Workspace/NegativeClient/Main.cpp \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/world/ServerLevel.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/Aimbot.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/Module.h \
+ C:/Users/David/Documents/Workspace/NegativeClient/Client/Slider.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/xf/DrawHelper.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/AntiKick.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/ChestESP.h \
@@ -191,6 +193,7 @@ C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/network/serv
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/network/server/PlayerList.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/rendering/buffer/BufferBuilder.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/rendering/buffer/BufferedImage.h:
+C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/rendering/CameraController.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/rendering/Font.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/rendering/GlStateManager.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/rendering/Tesselator.h:
@@ -212,6 +215,7 @@ C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/world/Level.
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/world/ServerLevel.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/Aimbot.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/Module.h:
+C:/Users/David/Documents/Workspace/NegativeClient/Client/Slider.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/xf/DrawHelper.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/AntiKick.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/ChestESP.h:

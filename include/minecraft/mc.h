@@ -69,6 +69,7 @@
 #include "rendering/buffer/BufferBuilder.h"
 #include "rendering/buffer/BufferedImage.h"
 
+#include "rendering/CameraController.h"
 #include "rendering/Font.h"
 #include "rendering/GlStateManager.h"
 #include "rendering/Tesselator.h"

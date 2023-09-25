@@ -7,6 +7,8 @@
 
 #include <xf/Vector.h>
 
+#include "Slider.h"
+
 class Module {
 public:
     enum Type {
@@ -26,6 +28,8 @@ public:
 
         selectIndex = 0;
         pageIndex = -1;
+
+        setSlider(nullptr);
     }
 
     void addModuleToVector(Module* page) {
@@ -92,11 +96,13 @@ public:
             0x99CCFF, // Page
             0xFFAA00, // Button
             0xFF5555, // Disabled 
-            0x55FF55  // Enabled
+            0x55FF55, // Enabled
+            0xFFFFFF  // Slider
         };
 
         if (moduleType == Type::PAGE) return colors[0];
         else if (moduleType == Type::BUTTON) return colors[1];
+        else if (moduleType == Type::SLIDER) return colors[4];
 
         return getState() ? colors[3] : colors[2];
     }
@@ -146,7 +152,10 @@ public:
                 pageIndex = selectIndex;
                 pageVector[pageIndex]->reset();
             } else {
-                pageVector[selectIndex]->toggleState();
+                if (pageVector[selectIndex]->isSlider()) {
+                    Slider<>* _slider = (Slider<>*) pageVector[selectIndex]->getSlider();
+                    ((void(*)(Slider<>*)) _slider->getEvent(1))(_slider);
+                } else pageVector[selectIndex]->toggleState();
             }
         } else {
             pageVector[pageIndex]->right();
@@ -154,7 +163,13 @@ public:
     }
 
     bool left() {
-        if (pageIndex != -1) {
+        if (pageIndex == -1) {
+            if (pageVector[selectIndex]->isSlider()) {
+                Slider<>* _slider = (Slider<>*) pageVector[selectIndex]->getSlider();
+                ((void(*)(Slider<>*)) _slider->getEvent(0))(_slider);
+            }
+            return true;
+        } else if (pageIndex != -1) {
             if (pageVector[pageIndex]->left()) return true;
             if (pageVector[pageIndex]->getPageIndex() == -1) {
                 pageIndex = -1;
@@ -178,18 +193,36 @@ public:
         return (!(type & mc::LivingEntity::GetType()));
     }
 
+    void setSlider(void* _slider) {
+        slider = (Slider<>*) _slider;
+    }
+
+    void* getSlider() {
+        return (void*) slider;
+    }
+
+    bool isSlider() {
+        return getType() == Type::SLIDER;
+    }
+
 private:
-    xf::Vector<Module*> pageVector;
+    // Module
     wchar_t* moduleName;
     Type moduleType;
     bool isEnabled;
 
+    // Events
     void(*onEnable)(Module*);
     void(*onDisable)(Module*);
-    void(*onClick)(Module*);
+    void(*onClick)(Module*); // Button Only
 
+    // Page / Settings
     int selectIndex;
     int pageIndex;
+    xf::Vector<Module*> pageVector;
+
+    // Slider
+    Slider<>* slider;
 };
 
 #endif
