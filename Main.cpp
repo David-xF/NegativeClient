@@ -33,6 +33,7 @@
 
 #include <xf/String.h>
 #include <xf/Benchmark.h>
+#include <xf/ItemInstanceHelper.h>
 
 void init() {
     InitTCPGecko();
@@ -139,7 +140,7 @@ DECL_FUNCTION(void, addMessage__3GuiFRCQ2_3std78basic_string__tm__58_wQ2_3std20c
  * C:\Users\David\AppData\Local\Temp\ccoEOp99.s:2097: Error: symbol `_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3' is already defined
  * C:\Users\David\AppData\Local\Temp\ccoEOp99.s:2130: Error: symbol `_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3Found' is already defined
  */
-DECL_FUNCTION(void, renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3, mc::Font* font, const mstd::wstring& name, float x, float y, float z, int idk, float yaw, float pitch, bool unk, bool unk1, int unk2, float unk3) {
+DECL_FUNCTION(void, renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3, mc::Font* font, const mstd::wstring& name, float x, float y, float z, int idk, float yaw, float pitch, bool unk, bool unk1, int unk2, float unk3) {    
     mc::Player* player = HealthIndicator::getPlayer(name);
     if (!player) {
         real_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3(font, name, x, y, z, idk, yaw, pitch, unk, unk1, unk2, unk3);
@@ -153,7 +154,7 @@ DECL_FUNCTION(void, renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic
             real_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3(font, HealthIndicator::displayName(name), x, y, z, idk, yaw, pitch, unk, unk1, unk2, unk3);
         } else {
             real_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3(font, name, x, newY[mode - 1], z, idk, yaw, pitch, unk, unk1, unk2, unk3);
-            real_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3(font, HealthIndicator::getHP(player), x, newY[mode    ], z, idk, yaw, pitch, unk, unk1, unk2, unk3);
+            real_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3(font, HealthIndicator::getHP(player), x, newY[mode], z, idk, yaw, pitch, unk, unk1, unk2, unk3);
         }
     }
 }
@@ -270,8 +271,24 @@ int c_main(void*) {
     });
     PlayerPage->addModuleToVector(changeNNID);
 
+    Module* OpSkull = new Module(L"OP Skull", Module::Type::BUTTON);
+    OpSkull->setEvents(nullptr, nullptr, [](Module*) {
+        mc::ItemInstance* item = new mc::ItemInstance(mc::Item::byId(397), 1, 1);
+        xf::ItemInstanceHelper::addEnchant(item, 0, 10); // Protection
+        xf::ItemInstanceHelper::addEnchant(item, 7, 10); // Thorns
+        xf::ItemInstanceHelper::addEnchant(item, 71, 1); // Vanishing
+
+        xf::ItemInstanceHelper::addAttrib(item, 0, 9E12, 0, L"head");
+        xf::ItemInstanceHelper::addAttrib(item, 2, 9E12, 0, L"head");
+        xf::ItemInstanceHelper::addAttrib(item, 4, 9E12, 0, L"head");
+
+        mc_boost::shared_ptr<mc::Packet> packet(new mc::ServerboundSetCreativeModeSlotPacket(5, item));
+        mc::Minecraft::getInstance()->getConnection(0)->send(packet);
+    });
+    PlayerPage->addModuleToVector(OpSkull);
+
     FriendsOfFriendsBypass* fofBypass = new FriendsOfFriendsBypass();
-    MiscPage->addModuleToSettings(fofBypass->getModule());
+    PlayerPage->addModuleToSettings(fofBypass->getModule());
 
     CustomChat* cChat = new CustomChat();
     VisualPage->addModuleToVector(cChat->getModule());

@@ -29,8 +29,8 @@ int mc_wcslen(const wchar_t* in) {
 }
 
 template<typename... Args>
-static void mc_swprintf(const wchar_t* outputPointer, uint32_t size, const wchar_t* inputString, Args... args) {
-	code::Func<void, 0x382C8C0, const wchar_t*, uint32_t, const wchar_t*, Args...>()(outputPointer, size, inputString, args...);
+static void mc_swprintf(const wchar_t* outputPointer, uint32_t size, const wchar_t* __format, Args... args) {
+	code::Func<void, 0x382C8C0, const wchar_t*, uint32_t, const wchar_t*, Args...>()(outputPointer, size, __format, args...);
 }
 
 static float degToRad(float deg) {

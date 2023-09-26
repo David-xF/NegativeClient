@@ -40,20 +40,49 @@ public:
         _module = new Module(L"Health Indicator", Module::Type::MODULE);
         staticHealthIndicator = this;
 
+        _module->addModuleToSettings(new Module(L"Health Color", Module::Type::MODULE));
+
         Module* sliderMod = new Module(L"Mode", Module::Type::SLIDER);
         sliderMod->setSlider(new HealthSlider());
         _module->addModuleToSettings(sliderMod);
     }
 
+    static bool shouldColorBasedOnHealth() {
+        HealthIndicator* healthIndicator = (HealthIndicator*) staticHealthIndicator;
+        return healthIndicator->getModule()->getPageVector()[0]->getState();
+    }
+
     static int getMode() {
         HealthIndicator* healthIndicator = (HealthIndicator*) staticHealthIndicator;
-        Slider<int>* slider = (Slider<int>*) healthIndicator->getModule()->getPageVector()[0]->getSlider();
+        Slider<int>* slider = (Slider<int>*) healthIndicator->getModule()->getPageVector()[1]->getSlider();
         return slider->getCurrent();
     }
 
     static const wchar_t* getHP(mc::Player* player) {
         wchar_t* temp = new wchar_t[0x40];
-        mc_swprintf(temp, 0x40, L"%s", toCStr(player->getHealth(), 2));
+        const char* colors[] = {
+            "6", // INF% - 100%
+            "a", // 100% - 50% 
+            "e", // 50%  - 25% 
+            "c"  // 25%  - 0%
+        };
+
+        char* col = (char*) "f";
+        float mHealth = player->getMaxHealth();
+        float health = player->getHealth() + player->getAbsorptionAmount();
+        if (shouldColorBasedOnHealth()) {
+            if ((mHealth / 4.0f) >= health) {
+                col = (char*) colors[3];
+            } else if ((mHealth / 2.0f) >= health) {
+                col = (char*) colors[2];
+            } else if (mHealth >= health) {
+                col = (char*) colors[1];
+            } else {
+                col = (char*) colors[0];
+            }
+        }
+
+        mc_swprintf(temp, 0x40, L"§%s%s§f", col, toCStr(health, 2));
         return temp;
     }
 
@@ -77,7 +106,7 @@ public:
         if (!player.ptr) return name.c_str();
     
         wchar_t* temp = new wchar_t[0x40];
-        mc_swprintf(temp, 0x40, L"%ls [%ls]", name.c_str(), getHP(player.ptr));
+        mc_swprintf(temp, 0x40, L"§f%ls [%ls]", name.c_str(), getHP(player.ptr));
         
         return temp;
     }

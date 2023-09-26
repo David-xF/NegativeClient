@@ -1,6 +1,6 @@
 #pragma once
 
-#include <minecraft/mstd/std.h>
+#include <minecraft/mc.h>
 
 namespace xf {
     class ItemInstanceHelper {

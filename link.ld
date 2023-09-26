@@ -1,5 +1,5 @@
 OUTPUT_ARCH(powerpc)
-ENTRY(startup)
+ENTRY(entry)
 
 MEMORY {
   rom(rxai) : ORIGIN = 0x01800000, LENGTH = 16m
@@ -8,7 +8,7 @@ MEMORY {
 SECTIONS {
   .text :
   {
-    *(.startup)
+    *(.entry)
     *(.text.*)
     *(.gcc_except_table.*)
     *(.sdata)
