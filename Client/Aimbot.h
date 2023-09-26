@@ -4,23 +4,47 @@
 #include <minecraft/mc.h>
 
 #include "Module.h"
+#include <xf/String.h>
 #include <xf/DrawHelper.h>
 
 void* staticAimbot;
 
 class Aimbot {
 public:
+    class RangeSlider : public Slider<int> {
+    public:
+        RangeSlider() : Slider<int>(0, 100, 25, 1) {
+            setDrawFunc([](Slider<int>* _this) -> mstd::wstring {
+                return xf::String<wchar_t>::intToStr(_this->getCurrent()).c_str();
+            });
+
+            setEvents([](Slider<int>* _this) { // Left
+                    if (_this->getCurrent() != _this->getMin()) {
+                        _this->setCurrent(_this->getCurrent() - _this->getIncrement());
+                    }
+                }, [](Slider<int>* _this) { // Right
+                    if (_this->getCurrent() != _this->getMax()) {
+                        _this->setCurrent(_this->getCurrent() + _this->getIncrement());
+                    }
+                }
+            );
+        }
+    };
+
     Aimbot() {
         _module = new Module(L"Aimbot", Module::Type::MODULE);
         staticAimbot = this;
 
         targetPlayers = true;
         targetEntities = true;
-        maxDistance = 25.0f;
 
         _module->addModuleToSettings((new Module(L"Target Entities", Module::Type::MODULE))->toggleState());
         _module->addModuleToSettings((new Module(L"Target Players", Module::Type::MODULE))->toggleState());
         _module->addModuleToSettings((new Module(L"Target Spectators", Module::Type::MODULE)));
+
+        Module* sliderMod = new Module(L"Range", Module::Type::SLIDER);
+        sliderMod->setSlider(new RangeSlider());
+        _module->addModuleToSettings(sliderMod);
 
         selected = nullptr;
     }
@@ -137,7 +161,7 @@ public:
     }
 
     float getMaxDistance() {
-        return maxDistance;
+        return mc::toFloat(((RangeSlider*) _module->getPageVector()[3]->getSlider())->getCurrent());
     }
 
     void setSelectedEntity(mc::Entity* entity) {
@@ -152,7 +176,6 @@ private:
     Module* _module;
     bool targetPlayers;
     bool targetEntities;
-    float maxDistance;
     mc::Entity* selected;
 };
 
