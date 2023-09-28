@@ -83,6 +83,10 @@ namespace mc {
 			return code::Func<float, 0x02728794, Player*>()(this);
 		}
 
+		void jumpFromGround() {
+			code::Func<void, 0x02721E08, Player*>()(this);
+		}
+
 		// void setItemSlot(EquipmentSlot const * slot, ItemInstance* item) {
 		// 	code::Func<void, 0x02725F70, Player*, EquipmentSlot const *, ItemInstance*>()(this, slot, item);
 		// }

@@ -75,6 +75,7 @@ DECL_HOOK(onFrameInMenu, void) {
     if (!aimbotThread) {
         aimbotThread = new mc::C4JThreadImpl([](void*) {
             while (true) Aimbot::aim();
+
             return 0;
         }, nullptr, "Negative Client - General Purpose Thread", 0x200);
         aimbotThread->Run();
@@ -281,6 +282,8 @@ int c_main(void*) {
         xf::ItemInstanceHelper::addAttrib(item, 0, 9E12, 0, L"head");
         xf::ItemInstanceHelper::addAttrib(item, 2, 9E12, 0, L"head");
         xf::ItemInstanceHelper::addAttrib(item, 4, 9E12, 0, L"head");
+
+        xf::ItemInstanceHelper::setName(item, L"Negative Client");
 
         mc_boost::shared_ptr<mc::Packet> packet(new mc::ServerboundSetCreativeModeSlotPacket(5, item));
         mc::Minecraft::getInstance()->getConnection(0)->send(packet);

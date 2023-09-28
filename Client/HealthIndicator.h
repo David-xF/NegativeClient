@@ -41,6 +41,7 @@ public:
         staticHealthIndicator = this;
 
         _module->addModuleToSettings(new Module(L"Health Color", Module::Type::MODULE));
+        _module->addModuleToSettings(new Module(L"In Percentage", Module::Type::MODULE));
 
         Module* sliderMod = new Module(L"Mode", Module::Type::SLIDER);
         sliderMod->setSlider(new HealthSlider());
@@ -52,9 +53,14 @@ public:
         return healthIndicator->getModule()->getPageVector()[0]->getState();
     }
 
+    static bool shouldShowInPercent() {
+        HealthIndicator* healthIndicator = (HealthIndicator*) staticHealthIndicator;
+        return healthIndicator->getModule()->getPageVector()[1]->getState();
+    }
+
     static int getMode() {
         HealthIndicator* healthIndicator = (HealthIndicator*) staticHealthIndicator;
-        Slider<int>* slider = (Slider<int>*) healthIndicator->getModule()->getPageVector()[1]->getSlider();
+        Slider<int>* slider = (Slider<int>*) healthIndicator->getModule()->getPageVector()[2]->getSlider();
         return slider->getCurrent();
     }
 
@@ -82,7 +88,11 @@ public:
             }
         }
 
-        mc_swprintf(temp, 0x40, L"§%s%s§f", col, toCStr(health, 2));
+        if (shouldShowInPercent()) {
+            mc_swprintf(temp, 0x40, L"§%s%s§f%s", col, toCStr((health / mHealth) * 100, 2), L"%");
+        } else {
+            mc_swprintf(temp, 0x40, L"§%s%s§f", col, toCStr(health, 2));
+        }
         return temp;
     }
 

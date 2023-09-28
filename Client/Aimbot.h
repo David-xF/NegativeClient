@@ -115,6 +115,7 @@ public:
         if (!lPlayer) return;
         mc::Level* level = lPlayer->lvl;
 
+
         bool isRight = false;
         for (int i = 0; i < 3; i++) {
             if (lPlayer->lvl == mc::Minecraft::getInstance()->getLevel(i)) isRight = true;
@@ -126,6 +127,11 @@ public:
         mc::Entity* nearest = aimbot->getSelectedEntity();
 
         if (nearest) {
+            mc::Item* item = mc::Item::byId(level->getBlockId(mc::toInt(lPlayer->position.x), mc::toInt(lPlayer->position.y + 0.9) - 1, mc::toInt(lPlayer->position.z)));
+            if (mc::Item::isItemABlock(item->getId()) && item->getId() != 0) {
+                lPlayer->jumpFromGround();
+            }
+
             if (nearest->position.distance(lPlayer->position) >= aimbot->getMaxDistance()) return;
             double diffX =  nearest->position.x - lPlayer->position.x;
             double diffY = (nearest->position.y + nearest->getEyeHeight()) - (lPlayer->position.y + lPlayer->getEyeHeight());
