@@ -41,7 +41,7 @@ public:
         staticHealthIndicator = this;
 
         _module->addModuleToSettings(new Module(L"Health Color", Module::Type::MODULE));
-        _module->addModuleToSettings(new Module(L"In Percentage", Module::Type::MODULE));
+        _module->addModuleToSettings(new Module(L"As Percentage", Module::Type::MODULE));
 
         Module* sliderMod = new Module(L"Mode", Module::Type::SLIDER);
         sliderMod->setSlider(new HealthSlider());
@@ -84,15 +84,20 @@ public:
             } else if (mHealth >= health) {
                 col = (char*) colors[1];
             } else {
-                col = (char*) colors[0];
+                if (player->getAbsorptionAmount() > 0) {
+                    col = (char*) colors[0];
+                } else {
+                    col = (char*) colors[1];
+                }
             }
         }
 
         if (shouldShowInPercent()) {
-            mc_swprintf(temp, 0x40, L"§%s%s§f%s", col, toCStr((health / mHealth) * 100, 2), L"%");
+            mc_swprintf(temp, 0x40, L"§%s%s%s§f", col, toCStr((health / mHealth) * 100, 2), "%");
         } else {
             mc_swprintf(temp, 0x40, L"§%s%s§f", col, toCStr(health, 2));
         }
+
         return temp;
     }
 
@@ -110,13 +115,11 @@ public:
         HealthIndicator* healthIndicator = (HealthIndicator*) staticHealthIndicator;
         if (!healthIndicator->getModule()->getState()) return name.c_str();
 
-        mc_boost::shared_ptr<mc::Player> player;
-        mc::Minecraft::getInstance()->getLevel(0)->getPlayerByName(player, name);
-
-        if (!player.ptr) return name.c_str();
+        mc::Player* player = getPlayer(name);
+        if (!player) return name.c_str();
     
         wchar_t* temp = new wchar_t[0x40];
-        mc_swprintf(temp, 0x40, L"§f%ls [%ls]", name.c_str(), getHP(player.ptr));
+        mc_swprintf(temp, 0x40, L"§f%ls [%ls]", name.c_str(), getHP(player));
         
         return temp;
     }

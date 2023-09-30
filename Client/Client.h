@@ -36,8 +36,8 @@ public:
         xf::GUI::DrawHelper::renderSetup();
         mc::Font* font = mc::Minecraft::getInstance()->defaultFonts;
         xf::GUI::DrawHelper::DisplayText(font, client->getName(), 1.5, 5, 5);
-        wchar_t fpsCounterText[0x20];
-        mc_swprintf(fpsCounterText, 0x20, L"FPS: %d", client->getFPS());
+        wchar_t fpsCounterText[0x40];
+        mc_swprintf(fpsCounterText, 0x40, L"Build: %s, %s  |  FPS: %d", __DATE__, __TIME__, client->getFPS());
         xf::GUI::DrawHelper::DisplayText(font, fpsCounterText, 1, 5, HEIGHT - FONT_CHAR_HEIGHT - 5);
 
         if (inMenu) return;

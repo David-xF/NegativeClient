@@ -177,11 +177,13 @@ int c_main(void*) {
     Module* VisualPage = new Module(L"Visual", Module::Type::PAGE);
     Module* PlayerPage = new Module(L"Player", Module::Type::PAGE);
     Module* MiscPage = new Module(L"Miscellaneous", Module::Type::PAGE);
+    Module* ClientPage = new Module(L"Client", Module::Type::PAGE);
     client->addPage(CombatPage);
     client->addPage(MovementPage);
     client->addPage(VisualPage);
     client->addPage(PlayerPage);
     client->addPage(MiscPage);
+    client->addPage(ClientPage);
     
     Module* CreditsModule = new Module(L"Credits", Module::Type::BUTTON);
     CreditsModule->setEvents(nullptr, nullptr, [](Module* mod) {
