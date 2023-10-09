@@ -65,6 +65,8 @@ DECL_HOOK(onFrameInGame, void) {
     Jesus::onTick();
 
     CustomChat::drawChat();
+
+    WorldEdit::onFrame();
 }
 
 DECL_HOOK(onFrameInMenu, void) {
@@ -169,18 +171,6 @@ DECL_FUNCTION(bool, renderDebug__9MinecraftSFv) {
     return ((SeeNameTags*) staticSeeNameTags)->getModule()->getState() ? true : real_renderDebug__9MinecraftSFv();
 }
 
-void drawLine(mc::Vec3 pos1, mc::Vec3 pos2) {
-    mc::BufferBuilder* builder = mc::Tesselator::getInstance()->getBuilder();
-    mc::GlStateManager::disableTexture();
-    mc::GlStateManager::lineWidth(5);
-    mc::GlStateManager::pushMatrix();
-    builder->begin(MC_GL_LINES);
-    builder->vertex(pos1.x, pos1.y, pos1.z, true);
-    builder->vertex(pos2.x, pos2.y, pos2.z, true);
-    builder->end();
-    mc::GlStateManager::popMatrix();
-}
-
 DECL_FUNCTION(void, renderEntities__13LevelRendererFQ2_5boost25shared_ptr__tm__8_6EntityP6Cullerf, void* c, const mc_boost::shared_ptr<mc::Entity>& entity, void* b, float a) {
     real_renderEntities__13LevelRendererFQ2_5boost25shared_ptr__tm__8_6EntityP6Cullerf(c, entity, b, a);
     
@@ -192,7 +182,7 @@ DECL_FUNCTION(void, renderEntities__13LevelRendererFQ2_5boost25shared_ptr__tm__8
     mc::GlStateManager::disableFog();
     if (positionVector->getSize() > 5) {
         for (int i = 0; i < positionVector->getSize() - 1; i++) {
-            drawLine(positionVector->operator[](i), positionVector->operator[](i + 1));
+            WorldEdit::drawLine(positionVector->operator[](i), positionVector->operator[](i + 1));
         }
     }
 

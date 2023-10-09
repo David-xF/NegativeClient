@@ -13,6 +13,12 @@ namespace mc {
             z = toFloat(_z) + 0.5f;
         }
 
+        Vec3(double _x, double _y, double _z) {
+            x = _x;
+            y = _y;
+            z = _z;
+        }
+
         Vec3() = default;
 
         float distance(Vec3 other) {
@@ -21,6 +27,20 @@ namespace mc {
                 powf(y - other.y, 2) + 
                 powf(z - other.z, 2)
             );
+        }
+
+        void operator*=(double amt) {
+            x *= amt;
+            y *= amt;
+            z *= amt;
+        }
+
+        Vec3 operator*(double amt) {
+            return Vec3(x * amt, y * amt, z * amt);
+        }
+
+        Vec3 operator+(Vec3 other) {
+            return Vec3(x + other.x, y + other.y, z + other.z);
         }
 
         double x;
