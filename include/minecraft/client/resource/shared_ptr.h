@@ -16,8 +16,10 @@ namespace mc_boost {
 		
 		T* operator->() const { return ptr; }
 		T& operator[](int i) const { return ptr[i]; }
-    
-	  	T *ptr;
+	
+		T* get() const { return ptr; }
+	private:
+	  	T* ptr;
 	  	uint32_t cnt;
 	};
 }

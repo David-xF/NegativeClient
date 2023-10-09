@@ -6,7 +6,7 @@
 
 #include <minecraft/mc.h>
 
-void* staticFlight;
+struct Flight* staticFlight;
 
 class Flight {
 public:
@@ -18,9 +18,7 @@ public:
     static void onTick(bool before) {
         if (!before) return;
 
-        Flight* mod = (Flight*) staticFlight;
-
-        bool canFly = mod->getModule()->getState();
+        bool canFly = staticFlight->getModule()->getState();
         mc::LocalPlayer* lPlayer = mc::Minecraft::getInstance()->thePlayer;
         int gamemode = lPlayer->GetGameType()->getId();
         if (gamemode == 1 || gamemode == 3) canFly = true;

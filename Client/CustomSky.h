@@ -6,7 +6,7 @@
 
 #include <minecraft/mc.h>
 
-void* staticCustomSky;
+struct CustomSky* staticCustomSky;
 
 class CustomSky {
 public:
@@ -18,16 +18,15 @@ public:
     }
 
     static bool draw() {
-        CustomSky* sky = (CustomSky*) staticCustomSky;
-        int img_id = sky->getImageID();
+        int img_id = staticCustomSky->getImageID();
         
-        if (!sky->getModule()->getState()) return true;
+        if (!staticCustomSky->getModule()->getState()) return true;
 
         if (img_id == 0) {
             mc::BufferedImage* image = new mc::BufferedImage(L"/misc/Sky.png", false, false, L"Common/", 2);
             img_id = mc::GlStateManager::genTexture();
             mc::Minecraft::getInstance()->textures->loadTexture(image, img_id);
-            sky->setImageID(img_id);
+            staticCustomSky->setImageID(img_id);
         }
 
         mc::GlStateManager::translatef(0.0f, 0.0f, 0.0f);

@@ -7,7 +7,7 @@
 #include <xf/String.h>
 #include <xf/DrawHelper.h>
 
-void* staticAimbot;
+struct Aimbot* staticAimbot;
 
 class Aimbot {
 public:
@@ -50,8 +50,7 @@ public:
     }
 
     static void selectEntity() {
-        Aimbot* aimbot = (Aimbot*) staticAimbot;
-        if (!aimbot->getModule()->getState()) return;
+        if (!staticAimbot->getModule()->getState()) return;
 
         mc::Minecraft* minecraft = mc::Minecraft::getInstance();
         mc::LocalPlayer* lPlayer = minecraft->thePlayer;
@@ -59,13 +58,13 @@ public:
 
         mc::Entity* nearest = nullptr;
 
-        if (aimbot->shouldTargetPlayers()) {
+        if (staticAimbot->shouldTargetPlayers()) {
             for (mc_boost::shared_ptr<mc::Player>& player : level->players) {
                 if (player->uuid != lPlayer->uuid) {
                     bool isAllowedToBeAdded = true;
-                    if (!aimbot->shouldTargetSpectators()) {
+                    if (!staticAimbot->shouldTargetSpectators()) {
                         if (player->type() == mc::RemotePlayer::GetType()) {
-                            mc::RemotePlayer* rPlayer = (mc::RemotePlayer*) player.ptr;
+                            mc::RemotePlayer* rPlayer = (mc::RemotePlayer*) player.get();
                             mc::GameType* gType = rPlayer->GetGameType();
                             if (gType->getId() == 3) isAllowedToBeAdded = false;
                         }
@@ -74,41 +73,40 @@ public:
                     if (isAllowedToBeAdded) {
                         float currEntityDist = player->position.distance(lPlayer->position);
                         if (!nearest) {
-                            nearest = player.ptr;
+                            nearest = player.get();
                         } else {
                             float nearestEntityDist = nearest->position.distance(lPlayer->position);
-                            if (nearestEntityDist > currEntityDist) nearest = player.ptr;
+                            if (nearestEntityDist > currEntityDist) nearest = player.get();
                         }
                     }
                 }
             }
         }
 
-        if (aimbot->shouldTargetEntities()) {
+        if (staticAimbot->shouldTargetEntities()) {
             for (mc_boost::shared_ptr<mc::Entity>& entity : level->entities) {
                 bool isPlayer = false;
                 for (mc_boost::shared_ptr<mc::Player>& player : level->players) {
-                    if (player.ptr == entity.ptr) isPlayer = true;
+                    if (player.get() == entity.get()) isPlayer = true;
                 }
 
-                if (entity.ptr != lPlayer && !Module::isBlackListed(entity->type()) && !isPlayer) {
+                if (entity.get() != lPlayer && !Module::isBlackListed(entity->type()) && !isPlayer) {
                     float currEntityDist = entity->position.distance(lPlayer->position);
                     if (!nearest) {
-                        nearest = entity.ptr;
+                        nearest = entity.get();
                     } else {
                         float nearestEntityDist = nearest->position.distance(lPlayer->position);
-                        if (nearestEntityDist > currEntityDist) nearest = entity.ptr;
+                        if (nearestEntityDist > currEntityDist) nearest = entity.get();
                     }
                 }
             }
         }
 
-        aimbot->setSelectedEntity(nearest);
+        staticAimbot->setSelectedEntity(nearest);
     }
 
     static void aim() {
-        Aimbot* aimbot = (Aimbot*) staticAimbot;
-        if (!aimbot->getModule()->getState()) return;
+        if (!staticAimbot->getModule()->getState()) return;
         mc::Minecraft* minecraft = mc::Minecraft::getInstance();
         if (!minecraft) return;
         mc::LocalPlayer* lPlayer = minecraft->thePlayer;
@@ -124,15 +122,10 @@ public:
         if (!isRight) return;
 
         if (!level) return;    
-        mc::Entity* nearest = aimbot->getSelectedEntity();
+        mc::Entity* nearest = staticAimbot->getSelectedEntity();
 
         if (nearest) {
-            mc::Item* item = mc::Item::byId(level->getBlockId(mc::toInt(lPlayer->position.x), mc::toInt(lPlayer->position.y + 0.9) - 1, mc::toInt(lPlayer->position.z)));
-            if (mc::Item::isItemABlock(item->getId()) && item->getId() != 0) {
-                lPlayer->jumpFromGround();
-            }
-
-            if (nearest->position.distance(lPlayer->position) >= aimbot->getMaxDistance()) return;
+            if (nearest->position.distance(lPlayer->position) >= staticAimbot->getMaxDistance()) return;
             double diffX =  nearest->position.x - lPlayer->position.x;
             double diffY = (nearest->position.y + nearest->getEyeHeight()) - (lPlayer->position.y + lPlayer->getEyeHeight());
             double diffZ =  nearest->position.z - lPlayer->position.z;

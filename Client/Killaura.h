@@ -5,7 +5,7 @@
 #include <minecraft/mc.h>
 #include <xf/DrawHelper.h>
 
-void* staticKillAura;
+struct KillAura* staticKillAura;
 
 class KillAura {
 public:
@@ -21,8 +21,7 @@ public:
     }
 
     static mc::Entity* selectEntity() {
-        KillAura* killAura = (KillAura*) staticKillAura;
-        if (!killAura->getModule()->getState()) return nullptr;
+        if (!staticKillAura->getModule()->getState()) return nullptr;
 
         mc::Minecraft* minecraft = mc::Minecraft::getInstance();
         mc::LocalPlayer* lPlayer = minecraft->thePlayer;
@@ -30,12 +29,12 @@ public:
 
         mc::Entity* nearest = nullptr;
 
-        if (killAura->canTargetPlayers()) {
+        if (staticKillAura->canTargetPlayers()) {
             for (mc_boost::shared_ptr<mc::Player>& player : level->players) {
                 if (player->uuid != lPlayer->uuid) {
                     bool isAllowedToBeAdded = true;
                     if (player->type() == mc::RemotePlayer::GetType()) {
-                        mc::RemotePlayer* rPlayer = (mc::RemotePlayer*) player.ptr;
+                        mc::RemotePlayer* rPlayer = (mc::RemotePlayer*) player.get();
                         mc::GameType* gType = rPlayer->GetGameType();
                         if (gType->getId() == 3) isAllowedToBeAdded = false;
                     }
@@ -43,45 +42,44 @@ public:
                     if (isAllowedToBeAdded) {
                         float currEntityDist = player->position.distance(lPlayer->position);
                         if (!nearest) {
-                            nearest = player.ptr;
+                            nearest = player.get();
                         } else {
                             float nearestEntityDist = nearest->position.distance(lPlayer->position);
-                            if (nearestEntityDist > currEntityDist) nearest = player.ptr;
+                            if (nearestEntityDist > currEntityDist) nearest = player.get();
                         }
                     }
                 }
             }
         }
 
-        if (killAura->canTargetEntities()) {
+        if (staticKillAura->canTargetEntities()) {
             for (mc_boost::shared_ptr<mc::Entity>& entity : level->entities) {
                 bool isPlayer = false;
                 for (mc_boost::shared_ptr<mc::Player>& player : level->players) {
-                    if (player.ptr == entity.ptr) isPlayer = true;
+                    if (player.get() == entity.get()) isPlayer = true;
                 }
 
-                if (entity.ptr != lPlayer && !Module::isBlackListed(entity->type()) && !isPlayer) {
+                if (entity.get() != lPlayer && !Module::isBlackListed(entity->type()) && !isPlayer) {
                     float currEntityDist = entity->position.distance(lPlayer->position);
                     if (!nearest) {
-                        nearest = entity.ptr;
+                        nearest = entity.get();
                     } else {
                         float nearestEntityDist = nearest->position.distance(lPlayer->position);
-                        if (nearestEntityDist > currEntityDist) nearest = entity.ptr;
+                        if (nearestEntityDist > currEntityDist) nearest = entity.get();
                     }
                 }
             }
 
         }
 
-        killAura->setPlayer(nullptr);
-        if (nearest->type() == mc::RemotePlayer::GetType()) killAura->setPlayer((mc::Player*) nearest);
+        staticKillAura->setPlayer(nullptr);
+        if (nearest->type() == mc::RemotePlayer::GetType()) staticKillAura->setPlayer((mc::Player*) nearest);
     
         return nearest;
     }
 
     static void onTick(bool before) {
-        KillAura* killAura = (KillAura*) staticKillAura;
-        if (!killAura->getModule()->getState()) return;
+        if (!staticKillAura->getModule()->getState()) return;
 
         mc::Minecraft* minecraft = mc::Minecraft::getInstance();
         mc::LocalPlayer* lPlayer = minecraft->thePlayer;
@@ -89,7 +87,7 @@ public:
         if (!before) {
             mc::Entity* nearestEntity = selectEntity();
             if (nearestEntity) {
-                if (nearestEntity->position.distance(lPlayer->position) > killAura->getMaxDist()) return;
+                if (nearestEntity->position.distance(lPlayer->position) > staticKillAura->getMaxDist()) return;
 
                 mc_boost::shared_ptr<mc::Packet> packet = new mc::ServerboundInteractPacket(nearestEntity);
                 mc::Minecraft::getInstance()->getConnection(0)->send(packet);
@@ -100,21 +98,20 @@ public:
     }
 
     static void draw() {
-        KillAura* killAura = (KillAura*) staticKillAura;
-        if (!killAura->getModule()->getState()) return;
+        if (!staticKillAura->getModule()->getState()) return;
         mc::LocalPlayer* lPlayer = mc::Minecraft::getInstance()->thePlayer;
-        mc::Player* target = killAura->getPlayer();
+        mc::Player* target = staticKillAura->getPlayer();
 
         bool isStillAvailable = false;
         for (mc_boost::shared_ptr<mc::Player>& player : lPlayer->lvl->players) {
-            if (target == player.ptr) {
+            if (target == player.get()) {
                 isStillAvailable = true;
                 break;      
             }
         }
 
         if (isStillAvailable) {
-            if (target->position.distance(lPlayer->position) > killAura->getMaxDist()) return;
+            if (target->position.distance(lPlayer->position) > staticKillAura->getMaxDist()) return;
         }
 
         if (!isStillAvailable) return;

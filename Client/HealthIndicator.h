@@ -5,7 +5,7 @@
 
 #include <minecraft/mc.h>
 
-void* staticHealthIndicator;
+struct HealthIndicator* staticHealthIndicator;
 
 class HealthIndicator {
 public:
@@ -49,18 +49,15 @@ public:
     }
 
     static bool shouldColorBasedOnHealth() {
-        HealthIndicator* healthIndicator = (HealthIndicator*) staticHealthIndicator;
-        return healthIndicator->getModule()->getPageVector()[0]->getState();
+        return staticHealthIndicator->getModule()->getPageVector()[0]->getState();
     }
 
     static bool shouldShowInPercent() {
-        HealthIndicator* healthIndicator = (HealthIndicator*) staticHealthIndicator;
-        return healthIndicator->getModule()->getPageVector()[1]->getState();
+        return staticHealthIndicator->getModule()->getPageVector()[1]->getState();
     }
 
     static int getMode() {
-        HealthIndicator* healthIndicator = (HealthIndicator*) staticHealthIndicator;
-        Slider<int>* slider = (Slider<int>*) healthIndicator->getModule()->getPageVector()[2]->getSlider();
+        Slider<int>* slider = (Slider<int>*) staticHealthIndicator->getModule()->getPageVector()[2]->getSlider();
         return slider->getCurrent();
     }
 
@@ -102,18 +99,16 @@ public:
     }
 
     static mc::Player* getPlayer(const mstd::wstring& name) {
-        HealthIndicator* healthIndicator = (HealthIndicator*) staticHealthIndicator;
-        if (!healthIndicator->getModule()->getState()) return nullptr;
+        if (!staticHealthIndicator->getModule()->getState()) return nullptr;
 
         mc_boost::shared_ptr<mc::Player> player;
         mc::Minecraft::getInstance()->getLevel(0)->getPlayerByName(player, name);
 
-        return player.ptr;
+        return player.get();
     }
 
     static const wchar_t* displayName(const mstd::wstring& name) {
-        HealthIndicator* healthIndicator = (HealthIndicator*) staticHealthIndicator;
-        if (!healthIndicator->getModule()->getState()) return name.c_str();
+        if (!staticHealthIndicator->getModule()->getState()) return name.c_str();
 
         mc::Player* player = getPlayer(name);
         if (!player) return name.c_str();

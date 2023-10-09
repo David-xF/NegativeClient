@@ -29,6 +29,7 @@
 #include "Client/Module.h"
 #include "Client/Scaffold.h"
 #include "Client/SeeNameTags.h"
+#include "Client/WorldEdit.h"
 #include "Client/XRay.h"
 
 #include <xf/String.h>
@@ -66,10 +67,6 @@ DECL_HOOK(onFrameInGame, void) {
     CustomChat::drawChat();
 }
 
-mc::Vec3 lPlayer_Position;
-float lPlayer_Yaw;
-float lPlayer_Pitch;
-
 DECL_HOOK(onFrameInMenu, void) {
     static mc::C4JThreadImpl* aimbotThread = nullptr;
     if (!aimbotThread) {
@@ -90,6 +87,7 @@ DECL_FUNCTION(void, renderSky__13LevelRendererFf, void* renderer, float f) {
     if (CustomSky::draw()) real_renderSky__13LevelRendererFf(renderer, f);
 }
 
+xf::Vector<mc::Vec3>* positionVector;
 DECL_FUNCTION(void, tick__11LocalPlayerFv, mc::LocalPlayer* lPlayer) {
     Flight::onTick(true);
     KillAura::onTick(true);
@@ -100,6 +98,9 @@ DECL_FUNCTION(void, tick__11LocalPlayerFv, mc::LocalPlayer* lPlayer) {
     Aimbot::selectEntity();
 
     Scaffold::onTick();
+
+    if (positionVector->getSize() > 120) positionVector->pop_front();
+    positionVector->push_back(lPlayer->position);
 }
 
 DECL_FUNCTION(void, handleDisconnect__20ClientPacketListenerFQ2_5boost37shared_ptr__tm__19_16DisconnectPacket, mc::ClientPacketListener* listener, const mc_boost::shared_ptr<mc::DisconnectPacket>& packet) {
@@ -160,16 +161,51 @@ DECL_FUNCTION(void, renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic
     }
 }
 
-DECL_FUNCTION(void, renderBlock__13BlockRendererFPC10BlockStateP5LevelRC8BlockPos, struct BlockRenderer* _this, struct BlockState* state, mc::Level* level, const mc::BlockPos& pos) {
-    XRay::tesselateBlock(_this, state, level, pos);
+DECL_FUNCTION(void, tesselateBlockInWorldWithAmbienceOcclusionTexLighting__13BlockRendererFPC10BlockStateRC8BlockPosfN23ib, void* _this, void* state, const mc::BlockPos& pos, float unk_0, float unk_1, float unk_2, int unk_3, bool unk_4) {
+    XRay::tesselateBlock(_this, state, pos, unk_0, unk_1, unk_2, unk_3, unk_4);
 }
 
 DECL_FUNCTION(bool, renderDebug__9MinecraftSFv) {
     return ((SeeNameTags*) staticSeeNameTags)->getModule()->getState() ? true : real_renderDebug__9MinecraftSFv();
 }
 
+void drawLine(mc::Vec3 pos1, mc::Vec3 pos2) {
+    mc::BufferBuilder* builder = mc::Tesselator::getInstance()->getBuilder();
+    mc::GlStateManager::disableTexture();
+    mc::GlStateManager::lineWidth(5);
+    mc::GlStateManager::pushMatrix();
+    builder->begin(MC_GL_LINES);
+    builder->vertex(pos1.x, pos1.y, pos1.z, true);
+    builder->vertex(pos2.x, pos2.y, pos2.z, true);
+    builder->end();
+    mc::GlStateManager::popMatrix();
+}
+
+DECL_FUNCTION(void, renderEntities__13LevelRendererFQ2_5boost25shared_ptr__tm__8_6EntityP6Cullerf, void* c, const mc_boost::shared_ptr<mc::Entity>& entity, void* b, float a) {
+    real_renderEntities__13LevelRendererFQ2_5boost25shared_ptr__tm__8_6EntityP6Cullerf(c, entity, b, a);
+    
+    mc::GlStateManager::disableCull();
+    mc::GlStateManager::disableLighting();
+    mc::GlStateManager::enableDepthTest();
+    mc::GlStateManager::enableBlend();
+    mc::GlStateManager::blendFunc(4, 5);
+    mc::GlStateManager::disableFog();
+    if (positionVector->getSize() > 5) {
+        for (int i = 0; i < positionVector->getSize() - 1; i++) {
+            drawLine(positionVector->operator[](i), positionVector->operator[](i + 1));
+        }
+    }
+
+    WorldEdit::render3D();
+
+    mc::GlStateManager::disableBlend();
+    mc::GlStateManager::enableCull();
+}
+
 int c_main(void*) {
     init();
+
+    positionVector = new xf::Vector<mc::Vec3>();
 
     Client* client = new Client(L"Negative");
     Module* CombatPage = new Module(L"Combat", Module::Type::PAGE);
@@ -298,11 +334,14 @@ int c_main(void*) {
     CustomChat* cChat = new CustomChat();
     VisualPage->addModuleToVector(cChat->getModule());
 
-    XRay* xray = new XRay((void*) real_renderBlock__13BlockRendererFPC10BlockStateP5LevelRC8BlockPos);
+    XRay* xray = new XRay((void*) real_tesselateBlockInWorldWithAmbienceOcclusionTexLighting__13BlockRendererFPC10BlockStateRC8BlockPosfN23ib);
     VisualPage->addModuleToVector(xray->getModule());
 
     SeeNameTags* nameTags = new SeeNameTags();
     VisualPage->addModuleToVector(nameTags->getModule());
+
+    WorldEdit* worldEdit = new WorldEdit();
+    MiscPage->addModuleToVector(worldEdit->getModule());
 
     HOOK(0x02D9CAD0, onFrameInGame, 0);
     HOOK(0x02D9C8B0, onFrameInMenu, 0);
@@ -316,17 +355,15 @@ int c_main(void*) {
     REPLACE(0x02D5731C, IsInPublicJoinableGame__19CGameNetworkManagerFv);
     REPLACE(0x0313873c, addMessage__3GuiFRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wibN33);
     REPLACE(0x030e9c14, renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3);
-    REPLACE(0x0301DB14, renderBlock__13BlockRendererFPC10BlockStateP5LevelRC8BlockPos);
+    REPLACE(0x02FED918, tesselateBlockInWorldWithAmbienceOcclusionTexLighting__13BlockRendererFPC10BlockStateRC8BlockPosfN23ib);
     REPLACE(0x031B2B24, renderDebug__9MinecraftSFv);
+
+    REPLACE(0x031B8298, renderEntities__13LevelRendererFQ2_5boost25shared_ptr__tm__8_6EntityP6Cullerf);
     writeMem(0x030FA014, 0x2C090001); // Enable Hitbox Visibility
     return 0;
 }
 
 void _main() {
-    lPlayer_Position = {0, 0, 0};
-    lPlayer_Yaw      = 0;
-    lPlayer_Pitch    = 0;
-
     mc::C4JThreadImpl* thread = new mc::C4JThreadImpl(c_main, nullptr, "Negative Client - Setup", 0x200);
     thread->Run();
     thread->SetDeleteOnExit(true);

@@ -17,8 +17,12 @@ namespace mc {
             code::Func<void, 0x02FD2AF4, BufferBuilder*, float, float, float, float, float>()(this, x, y, z, u, v);
         }
 
-        void vertex(float x, float y, float z = 0.0f) {
-            code::Func<void, 0x02FD2A34, BufferBuilder*, float, float, float>()(this, x, y, z);
+        // fixCoordinates = Fix Coordinates for 3D Rendering
+        void vertex(float x, float y, float z = 0.0f, bool fixCoordinates = false) {
+            double fx = fixCoordinates ? (x - code::Mem(0x104CAA18).as<double>()) : (x);
+            double fy = fixCoordinates ? (y - code::Mem(0x104CAA20).as<double>()) : (y);
+            double fz = fixCoordinates ? (z - code::Mem(0x104CAA28).as<double>()) : (z);
+            code::Func<void, 0x02FD2A34, BufferBuilder*, float, float, float>()(this, fx, fy, fz);
         }
 
         void end() {

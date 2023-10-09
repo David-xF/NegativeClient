@@ -8,7 +8,7 @@
 
 #include <minecraft/mc.h>
 
-void* staticChestESP;
+struct ChestESP* staticChestESP;
 
 class ChestESP {
 public:
@@ -21,25 +21,22 @@ public:
 
         Module* setColModule = new Module(L"Set Color [ARGB]", Module::Type::BUTTON);
         setColModule->setEvents(nullptr, nullptr, [](Module* origin) {
-            ChestESP* esp = (ChestESP*) staticChestESP;
-            mc::CInput::GetInput()->RequestKeyboard(L"", xf::String<wchar_t>::intToHexStr(esp->getColor()).c_str(), 0, 8, [](void* data, bool unk) {
-                ChestESP* esp = (ChestESP*) data;
+            mc::CInput::GetInput()->RequestKeyboard(L"", xf::String<wchar_t>::intToHexStr(staticChestESP->getColor()).c_str(), 0, 8, [](void* data, bool unk) {
                 wchar_t temp[9];
                 mc::CInput::GetInput()->GetText(temp, 9);
-                esp->setColor(xf::String<wchar_t>::hexStrToInt(temp));
+                staticChestESP->setColor(xf::String<wchar_t>::hexStrToInt(temp));
                 return 0;
-            }, esp, 0);
+            }, nullptr, 0);
         });
         _module->addModuleToSettings(setColModule);
     }
 
     static void draw(double x, double y, double z) {
-        ChestESP* esp = (ChestESP*) staticChestESP;
-        if (!esp->getModule()->getState()) return;
+        if (!staticChestESP->getModule()->getState()) return;
         mc::GlStateManager::disableDepthTest();
         mc::GlStateManager::disableTexture();
         mc::GlStateManager::disableLighting();
-        xf::GUI::DrawHelper::DisplayBox3D(x, y, z, 1, 1, 1, esp->getColor() & 0xFFFFFF, (esp->getColor() & 0xFF000000) >> 24);
+        xf::GUI::DrawHelper::DisplayBox3D(x, y, z, 1, 1, 1, staticChestESP->getColor() & 0xFFFFFF, (staticChestESP->getColor() & 0xFF000000) >> 24);
         mc::GlStateManager::enableDepthTest();
     }
 

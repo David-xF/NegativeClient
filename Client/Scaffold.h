@@ -6,7 +6,7 @@
 
 #include <minecraft/mc.h>
 
-void* staticScaffold;
+struct Scaffold* staticScaffold;
 
 class Scaffold {
 public:
@@ -18,12 +18,11 @@ public:
     }
 
     static void onTick() {
-        Scaffold* scaffold = (Scaffold*) staticScaffold;
-        if (!scaffold->getModule()->getState()) return;
+        if (!staticScaffold->getModule()->getState()) return;
 
         mc::LocalPlayer* lPlayer = mc::Minecraft::getInstance()->thePlayer;
         mc::ItemInstance* item;
-        item = lPlayer->inventory->getSelected().ptr;
+        item = lPlayer->inventory->getSelected().get();
         int x = mc::toInt(lPlayer->position.x);        
         int y = mc::toInt(lPlayer->position.y) - 1;
         int z = mc::toInt(lPlayer->position.z);
@@ -66,7 +65,7 @@ public:
             lPlayer->lvl->setData({_x, _y, _z}, item->aux, item->aux, false);
             lPlayer->swing();
 
-            scaffold->setPos({_x, _y, _z});
+            staticScaffold->setPos({_x, _y, _z});
         };
 
         if (!canPlace) {
@@ -121,22 +120,21 @@ public:
     static void updatePos(bool before) {
         static float yaw = 0;
         static float pitch = 0;
-        Scaffold* scaffold = (Scaffold*) staticScaffold;
-        if (!scaffold->getModule()->getState()) return;
+        if (!staticScaffold->getModule()->getState()) return;
 
         mc::LocalPlayer* lPlayer = mc::Minecraft::getInstance()->thePlayer;
         if (before) {
             yaw = lPlayer->yaw;
             pitch = lPlayer->pitch;
-            if (scaffold->getPos().y == -1) return;
-            double diffX = mc::toFloat(scaffold->getPos().x) + 0.5f -  lPlayer->position.x;
-            double diffY = mc::toFloat(scaffold->getPos().y) + 0.5f - (lPlayer->position.y + lPlayer->getEyeHeight());
-            double diffZ = mc::toFloat(scaffold->getPos().z) + 0.5f -  lPlayer->position.z;
+            if (staticScaffold->getPos().y == -1) return;
+            double diffX = mc::toFloat(staticScaffold->getPos().x) + 0.5f -  lPlayer->position.x;
+            double diffY = mc::toFloat(staticScaffold->getPos().y) + 0.5f - (lPlayer->position.y + lPlayer->getEyeHeight());
+            double diffZ = mc::toFloat(staticScaffold->getPos().z) + 0.5f -  lPlayer->position.z;
             double dist = sqrt(pow(diffX, 2) + pow(diffZ, 2));
             float _yaw =   (float)   atan2(diffZ, diffX) * (180.0 / M_PI) - 90.0f;
 		    float _pitch = (float) (-atan2(diffY, dist)) * (180.0 / M_PI);
 
-            scaffold->setPos({0, -1, 0});
+            staticScaffold->setPos({0, -1, 0});
 
             lPlayer->yaw = yaw;
             lPlayer->pitch = pitch;

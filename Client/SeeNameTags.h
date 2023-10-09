@@ -5,7 +5,7 @@
 
 #include <minecraft/mc.h>
 
-void* staticSeeNameTags;
+struct SeeNameTags* staticSeeNameTags;
 
 class SeeNameTags {
 public:

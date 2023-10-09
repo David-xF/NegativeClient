@@ -4,6 +4,22 @@
 
 #include "buffer/BufferedImage.h"
 
+#define MC_GL_ZERO                  0
+#define MC_GL_ONE                   1
+#define MC_GL_SRC_ALPHA             4
+#define MC_GL_ONE_MINUS_SRC_ALPHA   5
+
+#define MC_GL_TRIANGLES             0
+#define MC_GL_TRIANGLE_FAN          1
+#define MC_GL_QUADS                 2
+#define MC_GL_QUADS_STRIP           3
+#define MC_GL_LINES                 4
+#define MC_GL_LINES_STRIP           5
+
+#define MC_GL_MODELVIEW             0
+#define MC_GL_PROJECTION            1
+#define MC_GL_TEXTURE               2
+
 namespace mc {
     class GlStateManager {
     public:

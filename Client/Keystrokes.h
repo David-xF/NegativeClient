@@ -10,7 +10,7 @@
 
 #include <minecraft/mc.h>
 
-void* staticKeyStrokes;
+struct KeyStrokes* staticKeyStrokes;
 
 class KeyStrokes {
 public:
@@ -103,17 +103,16 @@ public:
     }
 
     static void draw() {
-        KeyStrokes* strokes = (KeyStrokes*) staticKeyStrokes;
-        if (!strokes->getModule()->getState()) return;
+        if (!staticKeyStrokes->getModule()->getState()) return;
 
         uint64_t currTime = mc::System::processTimeInMilliSecs();
         static uint64_t lastTime = currTime;
         float delta = mc::toFloat(currTime - lastTime) / 1000.0f;
-        START_BUTTONCHECK(btn & VPAD_BUTTON_ZL, strokes->getPressedButtons().push_back({VPAD_BUTTON_ZL, 0.0f}), btn)
+        START_BUTTONCHECK(btn & VPAD_BUTTON_ZL, staticKeyStrokes->getPressedButtons().push_back({VPAD_BUTTON_ZL, 0.0f}), btn)
         END_BUTTONCHECK()
 
-        for (int i = 0; i < strokes->getPressedButtons().getSize(); i++) {
-            strokes->drawKey(WIDTH / 2, HEIGHT / 2, strokes->getPressedButtons()[i].t1, delta, i);
+        for (int i = 0; i < staticKeyStrokes->getPressedButtons().getSize(); i++) {
+            staticKeyStrokes->drawKey(WIDTH / 2, HEIGHT / 2, staticKeyStrokes->getPressedButtons()[i].t1, delta, i);
         }
 
         lastTime = currTime;

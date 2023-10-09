@@ -5,7 +5,7 @@
 
 #include <minecraft/mc.h>
 
-void* staticAntiKick;
+struct AntiKick* staticAntiKick;
 
 class AntiKick {
 public:
@@ -15,8 +15,7 @@ public:
     }
 
     static bool onKick(mc::DisconnectPacket::eDisconnectReason reason) {
-        AntiKick* antiKick = (AntiKick*) staticAntiKick;
-        if (!antiKick->getModule()->getState()) return true;
+        if (!staticAntiKick->getModule()->getState()) return true;
         if (reason == mc::DisconnectPacket::eDisconnectReason::CONNECTION_LOST) return true;
         mc_printf(L"[AntiKick] Dismissed DisconnectPacket");
         return false;  

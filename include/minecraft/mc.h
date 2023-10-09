@@ -87,6 +87,7 @@
 #include "util/FloatConverter.h"
 #include "util/FoodData.h"
 #include "util/GameType.h"
+#include "util/HitResult.h"
 #include "util/InteractionHand.h"
 #include "util/MallocOperator.h"
 #include "util/Other.h"

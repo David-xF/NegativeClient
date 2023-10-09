@@ -7,7 +7,7 @@
 
 #include <minecraft/mc.h>
 
-void* staticFofBypass;
+struct FriendsOfFriendsBypass* staticFofBypass;
 
 class FriendsOfFriendsBypass {
 public:

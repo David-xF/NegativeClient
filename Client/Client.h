@@ -10,7 +10,7 @@
 
 #include "Module.h"
 
-void* staticClient;
+struct Client* staticClient;
 
 class Client {
 public:

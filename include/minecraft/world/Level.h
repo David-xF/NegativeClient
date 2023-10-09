@@ -45,6 +45,10 @@ namespace mc {
             code::Func<void, 0x02569ae4, Level*, const mc_boost::shared_ptr<struct Player>&, const mstd::wstring&>()(this, player, name);
         }
 
+        void getAllEntities(mstd::vector<struct Entity>& ent) {
+            code::Func<void, 0x02565ED8, Level*, mstd::vector<struct Entity>&>()(this, ent);
+        }
+
 		uint32_t field_0x0;
         uint32_t field_0x4;
         uint32_t field_0x8;

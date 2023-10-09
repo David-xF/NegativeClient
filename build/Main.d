@@ -85,6 +85,7 @@ Main.o: C:/Users/David/Documents/Workspace/NegativeClient/Main.cpp \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/Direction.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/ePARTICLE_TYPE.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/GameType.h \
+ C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/HitResult.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/Other.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/pair.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/ParticleType.h \
@@ -115,6 +116,7 @@ Main.o: C:/Users/David/Documents/Workspace/NegativeClient/Main.cpp \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/Module.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/Scaffold.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/SeeNameTags.h \
+ C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/XRay.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/xf/Benchmark.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/xf/ItemInstanceHelper.h
@@ -204,6 +206,7 @@ C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/DamageS
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/Direction.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/ePARTICLE_TYPE.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/GameType.h:
+C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/HitResult.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/Other.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/pair.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/ParticleType.h:
@@ -234,6 +237,7 @@ C:/Users/David/Documents/Workspace/NegativeClient/Client/Killaura.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/Module.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/Scaffold.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/SeeNameTags.h:
+C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/XRay.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/xf/Benchmark.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/xf/ItemInstanceHelper.h:

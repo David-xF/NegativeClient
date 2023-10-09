@@ -67,7 +67,11 @@ void _TEST(uint32_t addr, uint32_t funcPtr, int offset) {
 
 #define HOOK(addr, func, offset) \
     _TEST(addr, (uint32_t) hook_##func, offset);
-    
+
+// Only Works when the Address hasn't been called yet for Example
+// 0x02000000 blr
+// If 0x02000000 gets Called it can't be Overwritten with for Example li r3, 0
+// But Before it gets Called it can be Overwritten with for Example li r3, 0
 #define REPLACE(sAddr, func) REPLACE_EX(sAddr, real_##func, my_##func, func, real_instructions)
 #define REPLACE_EX(sAddr, original_func, replace_func, func, ins_list) \
     auto lambda_##func = [&]() {                                       \

@@ -8,7 +8,7 @@
 #include <minecraft/mc.h>
 #include <xf/DrawHelper.h>
 
-void* staticCustomChat;
+struct CustomChat* staticCustomChat;
 
 class CustomChat {
 public:
@@ -25,9 +25,8 @@ public:
     }
 
     static bool addMessageS(const wchar_t* msg) {
-        CustomChat* cChat = (CustomChat*) staticCustomChat;
-        if (!cChat->getModule()->getState()) return true;
-        cChat->addMessage(msg);
+        if (!staticCustomChat->getModule()->getState()) return true;
+        staticCustomChat->addMessage(msg);
         return false;
     }
 
@@ -48,33 +47,32 @@ public:
     }
 
     static void drawChat() {
-        CustomChat* cChat = (CustomChat*) staticCustomChat;
-        if (!cChat->getModule()->getState()) return;
+        if (!staticCustomChat->getModule()->getState()) return;
 
         uint64_t cTime = mc::System::processTimeInMilliSecs();
         float minTime = 5.0f;
         float maxTime = 2.5f;
 
         int popBackCount = 0;
-        for (int i = 0; i < cChat->getSize(); i++) {
-            if ((mc::toFloat(cTime - cChat->at(i).addTime) / 1000.0f) > (minTime + maxTime)) popBackCount++;
+        for (int i = 0; i < staticCustomChat->getSize(); i++) {
+            if ((mc::toFloat(cTime - staticCustomChat->at(i).addTime) / 1000.0f) > (minTime + maxTime)) popBackCount++;
         }
 
         for (int i = 0; i < popBackCount; i++) {
-            cChat->pop();
+            staticCustomChat->pop();
         }
 
         xf::GUI::DrawHelper::renderSetup();
         mc::Font* font = mc::Minecraft::getInstance()->defaultFonts;
         
-        int entrys = cChat->getSize();
+        int entrys = staticCustomChat->getSize();
         if (entrys > 7) entrys = 7;
         
         // Background
         // if (entrys > 0) {
         //     int longestWidth = 0;
         //     for (int i = 0; i < entrys; i++) {
-        //         int width = font->width(cChat->at(i).message);
+        //         int width = font->width(staticCustomChat->at(i).message);
         //         if (width > longestWidth) longestWidth = width;
         //     }
         // 
@@ -83,10 +81,10 @@ public:
         // }
 
         for (int i = 0; i < entrys; i++) {
-            float t = mc::toFloat(cTime - cChat->at(i).addTime) / 1000.0f;
+            float t = mc::toFloat(cTime - staticCustomChat->at(i).addTime) / 1000.0f;
             uint8_t alpha = 0xFF - ((t > minTime) ? (((t - minTime) / maxTime) * 0xFF) : 0x0);
             if (t > (minTime + maxTime)) alpha = 0x0;
-            xf::GUI::DrawHelper::DisplayText(font, cChat->at(i).message, 1.0, 5, HEIGHT - 130 - (i * (2 + FONT_CHAR_HEIGHT)), (alpha << 24) | 0xFFFFFF, false);
+            xf::GUI::DrawHelper::DisplayText(font, staticCustomChat->at(i).message, 1.0, 5, HEIGHT - 130 - (i * (2 + FONT_CHAR_HEIGHT)), (alpha << 24) | 0xFFFFFF, false);
         }
     }
 

@@ -8,7 +8,7 @@
 
 #include <minecraft/mc.h>
 
-void* staticESP;
+struct ESP* staticESP;
 
 class ESP {
 public:
@@ -24,33 +24,30 @@ public:
         _module->addModuleToSettings((new Module(L"Player Color", Module::Type::MODULE))->toggleState());
         Module* setColModule = new Module(L"Set Color [ARGB]", Module::Type::BUTTON);
         setColModule->setEvents(nullptr, nullptr, [](Module* origin) {
-            ESP* esp = (ESP*) staticESP;
-            mc::CInput::GetInput()->RequestKeyboard(L"", xf::String<wchar_t>::intToHexStr(esp->getColor()).c_str(), 0, 8, [](void* data, bool unk) {
-                ESP* esp = (ESP*) data;
+            mc::CInput::GetInput()->RequestKeyboard(L"", xf::String<wchar_t>::intToHexStr(staticESP->getColor()).c_str(), 0, 8, [](void* data, bool unk) {
                 wchar_t temp[9];
                 mc::CInput::GetInput()->GetText(temp, 9);
-                esp->setColor(xf::String<wchar_t>::hexStrToInt(temp));
+                staticESP->setColor(xf::String<wchar_t>::hexStrToInt(temp));
                 return 0;
-            }, esp, 0);
+            }, nullptr, 0);
         });
         _module->addModuleToSettings(setColModule);
     }
 
     static void draw(void* renderer, const mc_boost::shared_ptr<mc::Entity>& ref, uint32_t unk, float x, float y, float z, float a, float b) {
-        ESP* esp = (ESP*) staticESP;
-        if (!esp->getModule()->getState()) return; 
+        if (!staticESP->getModule()->getState()) return; 
         
         mc::Player* player = nullptr;
         for (mc_boost::shared_ptr<mc::Player>& _player : ref->lvl->players) {
-            if (_player.ptr == ref.ptr) {
-                player = _player.ptr;
+            if (_player.get() == ref.get()) {
+                player = _player.get();
                 break;
             }
         }
 
         bool shouldDraw = false;
-        if (player && esp->shouldTargetPlayers())   shouldDraw = true;
-        if (!player && esp->shouldTargetEntities()) shouldDraw = true;
+        if (player && staticESP->shouldTargetPlayers())   shouldDraw = true;
+        if (!player && staticESP->shouldTargetEntities()) shouldDraw = true;
 
         code::Func<void, 0x0317a08c>()(); // Lighting::turnOn(void)
         mc::GlStateManager::disableTexture();
@@ -72,9 +69,9 @@ public:
         float sY = (ref->aabb->max.y - ref->aabb->min.y);
         float sZ = (ref->aabb->max.z - ref->aabb->min.z) / 2.0f;
 
-        uint32_t color = !player ? esp->getColor() : colors[player->colourIndex];
-        if (!esp->playerColor()) color = esp->getColor();
-        if (esp->playerColor() && player) color = (esp->getColor() & 0xFF000000) | color;
+        uint32_t color = !player ? staticESP->getColor() : colors[player->colourIndex];
+        if (!staticESP->playerColor()) color = staticESP->getColor();
+        if (staticESP->playerColor() && player) color = (staticESP->getColor() & 0xFF000000) | color;
         
         // My Hitbox
         xf::GUI::DrawHelper::DisplayBox3D(
