@@ -89,7 +89,6 @@ DECL_FUNCTION(void, renderSky__13LevelRendererFf, void* renderer, float f) {
     if (CustomSky::draw()) real_renderSky__13LevelRendererFf(renderer, f);
 }
 
-xf::Vector<mc::Vec3>* positionVector;
 DECL_FUNCTION(void, tick__11LocalPlayerFv, mc::LocalPlayer* lPlayer) {
     Flight::onTick(true);
     KillAura::onTick(true);
@@ -100,9 +99,6 @@ DECL_FUNCTION(void, tick__11LocalPlayerFv, mc::LocalPlayer* lPlayer) {
     Aimbot::selectEntity();
 
     Scaffold::onTick();
-
-    if (positionVector->getSize() > 120) positionVector->pop_front();
-    positionVector->push_back(lPlayer->position);
 }
 
 DECL_FUNCTION(void, handleDisconnect__20ClientPacketListenerFQ2_5boost37shared_ptr__tm__19_16DisconnectPacket, mc::ClientPacketListener* listener, const mc_boost::shared_ptr<mc::DisconnectPacket>& packet) {
@@ -139,7 +135,7 @@ DECL_FUNCTION(void, addMessage__3GuiFRCQ2_3std78basic_string__tm__58_wQ2_3std20c
 }
 
 /*
- * MUST BE DONE LIKE THIS IMPLEMENTATION OR THIS ERROR WILL APPEAR
+ * MUST BE DONE LIKE THIS IMPLEMENTATION OR THIS ERROR WILL APPEAR (GOT FIXED BUT IM TOO LAZY TO CHANGE IT :3)
  * C:\Users\David\AppData\Local\Temp\ccoEOp99.s:2025: Error: symbol `_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3Start' is already defined
  * C:\Users\David\AppData\Local\Temp\ccoEOp99.s:2097: Error: symbol `_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3' is already defined
  * C:\Users\David\AppData\Local\Temp\ccoEOp99.s:2130: Error: symbol `_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3Found' is already defined
@@ -171,6 +167,42 @@ DECL_FUNCTION(bool, renderDebug__9MinecraftSFv) {
     return ((SeeNameTags*) staticSeeNameTags)->getModule()->getState() ? true : real_renderDebug__9MinecraftSFv();
 }
 
+void _displayText(mc::Vec3 pos, xf::String<wchar_t> str, uint32_t color, float size, bool hasShadow, bool followLocalPlayer = false) {
+    mc::Font* font = mc::Minecraft::getInstance()->defaultFonts;
+    code::Func<void, 0x03181508>()(); // Lighting::turnOff(void)
+    mc::GlStateManager::disableCull();
+    mc::GlStateManager::disableDepthTest();
+    mc::GlStateManager::enableBlend();
+    mc::GlStateManager::blendFunc(4, 5);
+
+    mc::GlStateManager::color4f(1, 1, 1, 1);
+    mc::GlStateManager::enableTexture();
+    mc::GlStateManager::pushMatrix();
+    double fx = pos.x - code::Mem(0x104CAA18).as<double>();
+    double fy = pos.y - code::Mem(0x104CAA20).as<double>();
+    double fz = pos.z - code::Mem(0x104CAA28).as<double>();
+    mc::GlStateManager::translatef(fx, fy, fz);
+    if (followLocalPlayer) {
+        double diffX = pos.x - mc::Minecraft::getInstance()->thePlayer->position.x;
+        double diffY = pos.y - mc::Minecraft::getInstance()->thePlayer->position.y;
+        double diffZ = pos.z - mc::Minecraft::getInstance()->thePlayer->position.z;
+        float dist = sqrtf(powf(diffX, 2) + powf(diffZ, 2));
+        float yaw = (float) atan2(diffZ, diffX) * (180.0f / M_PI) - 90.0f;
+        float pitch = (float) atan2(diffY, dist) * (180.0f / M_PI);
+        mc::GlStateManager::rotatef(180.0f - yaw, 0.0f, 1.0f, 0.0f);
+        mc::GlStateManager::rotatef(pitch,        1.0f, 0.0f, 0.0f);
+    }
+    mc::GlStateManager::translatef(-size, 0.0f, 0.0f);
+    mc::GlStateManager::scalef(size, size, 0);
+    if (hasShadow) font->drawShadow(str.c_str(), 0, 0, color);
+    else           font->draw      (str.c_str(), 0, 0, color);
+    mc::GlStateManager::popMatrix();
+    mc::GlStateManager::disableBlend();
+    mc::GlStateManager::enableDepthTest();
+    code::Func<void, 0x0317a08c>()(); // Lighting::turnOn(void)
+    //real_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3(font, L"Test", fx, fy, fz, 0xFFFFFF, 0, 0, true, true, 0x000000, 1.0);
+}
+
 DECL_FUNCTION(void, renderEntities__13LevelRendererFQ2_5boost25shared_ptr__tm__8_6EntityP6Cullerf, void* c, const mc_boost::shared_ptr<mc::Entity>& entity, void* b, float a) {
     real_renderEntities__13LevelRendererFQ2_5boost25shared_ptr__tm__8_6EntityP6Cullerf(c, entity, b, a);
     
@@ -180,22 +212,17 @@ DECL_FUNCTION(void, renderEntities__13LevelRendererFQ2_5boost25shared_ptr__tm__8
     mc::GlStateManager::enableBlend();
     mc::GlStateManager::blendFunc(4, 5);
     mc::GlStateManager::disableFog();
-    if (positionVector->getSize() > 5) {
-        for (int i = 0; i < positionVector->getSize() - 1; i++) {
-            WorldEdit::drawLine(positionVector->operator[](i), positionVector->operator[](i + 1));
-        }
-    }
-
     WorldEdit::render3D();
-
+    // _displayText({0, 20, 0}, L"Test", 5.0f, 0xFFFFFFFF, true, true);
+    // _displayText({0, 20, 5}, L"Test", 5.0f, 0xFFFFFFFF, true, false);
+    // _displayText({5, 20, 0}, L"Test", 5.0f, 0xFFFFFFFF, false, true);
+    // _displayText({0, 20, -5}, L"Test", 5.0f, 0xFFFFFFFF, false, false);
     mc::GlStateManager::disableBlend();
     mc::GlStateManager::enableCull();
 }
 
 int c_main(void*) {
     init();
-
-    positionVector = new xf::Vector<mc::Vec3>();
 
     Client* client = new Client(L"Negative");
     Module* CombatPage = new Module(L"Combat", Module::Type::PAGE);
@@ -324,7 +351,7 @@ int c_main(void*) {
     CustomChat* cChat = new CustomChat();
     VisualPage->addModuleToVector(cChat->getModule());
 
-    XRay* xray = new XRay((void*) real_tesselateBlockInWorldWithAmbienceOcclusionTexLighting__13BlockRendererFPC10BlockStateRC8BlockPosfN23ib);
+    XRay* xray = new XRay((void*) exec_tesselateBlockInWorldWithAmbienceOcclusionTexLighting__13BlockRendererFPC10BlockStateRC8BlockPosfN23ib);
     VisualPage->addModuleToVector(xray->getModule());
 
     SeeNameTags* nameTags = new SeeNameTags();

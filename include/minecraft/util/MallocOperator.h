@@ -31,8 +31,6 @@ void operator delete[](void* ptr) _GLIBCXX_USE_NOEXCEPT {
     return _delete(ptr);
 }
 
-
-
 namespace mstd {
     // See StackOverflow replies to this answer for important commentary about inheriting from std::allocator before replicating this code.
     // https://stackoverflow.com/questions/826569/compelling-examples-of-custom-c-allocators

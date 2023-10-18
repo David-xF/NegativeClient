@@ -10,6 +10,7 @@ SECTIONS {
   {
     *(.entry)
     *(.text.*)
+    *(.gcc_except_table)
     *(.gcc_except_table.*)
     *(.sdata)
     *(.sdata.*)
@@ -19,7 +20,10 @@ SECTIONS {
     *(.bss.*)
     *(.sbss)
     *(.sbss.*)
+    *(.data)
     *(.data.*)
+    *(.ext)
+    *(.ext.*)
     data_end = .;
   } > rom
 }

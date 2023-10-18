@@ -91,8 +91,9 @@ Main.o: C:/Users/David/Documents/Workspace/NegativeClient/Main.cpp \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/ParticleType.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/SoundEvent.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/unordered_map.h \
- C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/VTable_Item.h \
+ C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/VTable_Entity.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/VTable.h \
+ C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/VTable_Item.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/world/gamemode/ServerPlayerGameMode.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/world/Level.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/world/ServerLevel.h \
@@ -117,6 +118,9 @@ Main.o: C:/Users/David/Documents/Workspace/NegativeClient/Main.cpp \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/Scaffold.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/SeeNameTags.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit.h \
+ C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/Tool.h \
+ C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/StoneShovel.h \
+ C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/Tool.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/XRay.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/xf/Benchmark.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/xf/ItemInstanceHelper.h
@@ -212,8 +216,9 @@ C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/pair.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/ParticleType.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/SoundEvent.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/unordered_map.h:
-C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/VTable_Item.h:
+C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/VTable_Entity.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/VTable.h:
+C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/util/VTable_Item.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/world/gamemode/ServerPlayerGameMode.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/world/Level.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/world/ServerLevel.h:
@@ -238,6 +243,9 @@ C:/Users/David/Documents/Workspace/NegativeClient/Client/Module.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/Scaffold.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/SeeNameTags.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit.h:
+C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/Tool.h:
+C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/StoneShovel.h:
+C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/Tool.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/XRay.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/xf/Benchmark.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/xf/ItemInstanceHelper.h:
