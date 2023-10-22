@@ -10,7 +10,6 @@ namespace mc {
     // 03299F8C
     class ServerPlayer : public Player {
     public:
-
         void teleportTo(double _x, double _y, double _z) {
             code::Func<void, 0x032d6b74, ServerPlayer*, double, double, double>()(this, _x, _y, _z);
         }

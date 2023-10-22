@@ -26,6 +26,10 @@ namespace xf {
             string[size] = 0x0;
         }
 
+        ~String() {
+            _delete(string);
+        }
+
         String() = default;
 
         static String<T> randomStr(int _length, String<T> charSet) {
@@ -38,18 +42,18 @@ namespace xf {
         }
 
         static String<T> intToStr(int input) {
-            wchar_t* t = new wchar_t[0x30];
+            wchar_t t[0x30];
             mc_swprintf(t, 0x30, L"%d", input);
             if      (sizeof(T) == sizeof(wchar_t)) return (T*) t;
-            else if (sizeof(T) == sizeof(char))     return (T*) wcharToChar(t);
+            else if (sizeof(T) == sizeof(char))    return (T*) wcharToChar(t);
         }
         
         static String<T> intToHexStr(uint32_t input, int l = 8) {
-            wchar_t* t = new wchar_t[0x30];
+            wchar_t t[0x30];
             mc_swprintf(t, 0x30, L"%s%dX", "%0", l, input);
             mc_swprintf(t, 0x30, t, input);
             if      (sizeof(T) == sizeof(wchar_t)) return (T*) t;
-            else if (sizeof(T) == sizeof(char))     return (T*) wcharToChar(t);
+            else if (sizeof(T) == sizeof(char))    return (T*) wcharToChar(t);
         }
 
         bool startsWith(T input) {

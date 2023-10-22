@@ -156,6 +156,18 @@ void _TEST(uint32_t addr, uint32_t funcPtr, int offset) {
     }                                                                \
     res my_##name(__VA_ARGS__)
 
+void replaceInstructions(uint32_t addr, xf::Vector<uint32_t> _instructions) {
+    uint32_t start = (uint32_t) &instructionBuffer[__test_index];
+    uint32_t originalInstr = code::Mem(addr).as<uint32_t>();
+    writeMem(addr, branchTo(addr, (void*) start));
+    for (uint32_t _instr : _instructions) {
+        instructionBuffer[__test_index++] = _instr;
+    }
+    instructionBuffer[__test_index++] = originalInstr;
+    instructionBuffer[__test_index] = branchTo((uint32_t) &instructionBuffer[__test_index], (void*) (addr + 4));
+    __test_index++;
+}
+
 void InitWups() {
     uint32_t* data = new uint32_t[0x10]; // Extra Space, if more Data is needed
     code::Mem(0x104D4DDC).as<uint32_t>() = (uint32_t) data;

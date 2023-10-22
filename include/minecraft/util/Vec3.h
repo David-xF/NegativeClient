@@ -43,6 +43,14 @@ namespace mc {
             return Vec3(x + other.x, y + other.y, z + other.z);
         }
 
+        bool operator==(Vec3 other) {
+            bool b_x = x == other.x;
+            bool b_y = y == other.y;
+            bool b_z = z == other.z;
+
+            return b_x && b_y && b_z;
+        }
+
         double x;
         double y;
         double z;

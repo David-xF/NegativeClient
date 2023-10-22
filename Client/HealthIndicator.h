@@ -61,8 +61,7 @@ public:
         return slider->getCurrent();
     }
 
-    static const wchar_t* getHP(mc::Player* player) {
-        wchar_t* temp = new wchar_t[0x40];
+    static xf::String<wchar_t> getHP(mc::Player* player) {
         const char* colors[] = {
             "6", // INF% - 100%
             "a", // 100% - 50% 
@@ -89,6 +88,7 @@ public:
             }
         }
 
+        wchar_t temp[0x40];
         if (shouldShowInPercent()) {
             mc_swprintf(temp, 0x40, L"§%s%s%s§f", col, toCStr((health / mHealth) * 100, 2), "%");
         } else {
@@ -107,15 +107,15 @@ public:
         return player.get();
     }
 
-    static const wchar_t* displayName(const mstd::wstring& name) {
+    static xf::String<wchar_t> displayName(const mstd::wstring& name) {
         if (!staticHealthIndicator->getModule()->getState()) return name.c_str();
 
         mc::Player* player = getPlayer(name);
         if (!player) return name.c_str();
     
-        wchar_t* temp = new wchar_t[0x40];
-        mc_swprintf(temp, 0x40, L"§f%ls [%ls]", name.c_str(), getHP(player));
-        
+        wchar_t temp[0x40];
+        mc_swprintf(temp, 0x40, L"§f%ls [%ls]", name.c_str(), getHP(player).c_str());
+    
         return temp;
     }
 

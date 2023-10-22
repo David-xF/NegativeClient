@@ -6,12 +6,24 @@
 
 #include <string>
 
+uint32_t totalMemoryAllocated = 0;
+uint32_t totalAllocs = 0;
+uint32_t totalDeletes = 0;
+uint32_t fakeDeletes = 0;
+
 void _delete(void* ptr) {
-	code::Func<void, 0x0382ABB4, void*>()(ptr);
+    if (ptr) {
+        totalDeletes++;
+	    code::Func<void, 0x0382ABB4, void*>()(ptr);
+    } else {
+        fakeDeletes++;
+    }
 }
 
 template<typename T>
 T* _new(size_t size) {
+    totalMemoryAllocated += (sizeof(T) * size);
+    totalAllocs++;
     return code::Func<T*, 0x0382AACC, size_t>()(sizeof(T) * size);
 }
 
@@ -35,7 +47,7 @@ namespace mstd {
     // See StackOverflow replies to this answer for important commentary about inheriting from std::allocator before replicating this code.
     // https://stackoverflow.com/questions/826569/compelling-examples-of-custom-c-allocators
     template <typename T>
-    class allocator: public std::allocator<T> {
+    class allocator : public std::allocator<T> {
     public:
         template<typename _Tp1>
         struct rebind {

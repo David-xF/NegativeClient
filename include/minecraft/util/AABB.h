@@ -15,6 +15,13 @@ namespace mc {
             code::Func<void, 0x02ca58a8, AABB*, const AABB&>()(this, aabb);
         }
 
+        AABB(int x1, int y1, int z1, int x2, int y2, int z2) {
+            code::Func<void, 0x0200c920, AABB*, float, float, float, float, float, float>()(this, 
+                toFloat(x1), toFloat(y1), toFloat(z1),
+                toFloat(x2), toFloat(y2), toFloat(z2)
+            );
+        }
+
         void set(const AABB* aabb) {
             code::Func<void, 0x0200cf7c, AABB*, const AABB*>()(this, aabb);
         }

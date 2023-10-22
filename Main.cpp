@@ -58,14 +58,10 @@ DECL_FUNCTION(void, renderHitbox__22EntityRenderDispatcherFRQ2_5boost25shared_pt
 DECL_HOOK(onFrameInGame, void) {
     Client::draw(false);
     KillAura::draw();
-
     Scaffold::onTick();
-
     KeyStrokes::draw();
     Jesus::onTick();
-
     CustomChat::drawChat();
-
     WorldEdit::onFrame();
 }
 
@@ -95,9 +91,7 @@ DECL_FUNCTION(void, tick__11LocalPlayerFv, mc::LocalPlayer* lPlayer) {
     real_tick__11LocalPlayerFv(lPlayer);
     KillAura::onTick(false);
     Flight::onTick(false);
-
     Aimbot::selectEntity();
-
     Scaffold::onTick();
 }
 
@@ -151,10 +145,10 @@ DECL_FUNCTION(void, renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic
 
         int mode = HealthIndicator::getMode();
         if (mode == 0) { // Inline
-            real_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3(font, HealthIndicator::displayName(name), x, y, z, idk, yaw, pitch, unk, unk1, unk2, unk3);
+            real_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3(font, HealthIndicator::displayName(name).c_str(), x, y, z, idk, yaw, pitch, unk, unk1, unk2, unk3);
         } else {
             real_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3(font, name, x, newY[mode - 1], z, idk, yaw, pitch, unk, unk1, unk2, unk3);
-            real_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3(font, HealthIndicator::getHP(player), x, newY[mode], z, idk, yaw, pitch, unk, unk1, unk2, unk3);
+            real_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3(font, HealthIndicator::getHP(player).c_str(), x, newY[mode], z, idk, yaw, pitch, unk, unk1, unk2, unk3);
         }
     }
 }
@@ -167,11 +161,13 @@ DECL_FUNCTION(bool, renderDebug__9MinecraftSFv) {
     return ((SeeNameTags*) staticSeeNameTags)->getModule()->getState() ? true : real_renderDebug__9MinecraftSFv();
 }
 
-void _displayText(mc::Vec3 pos, xf::String<wchar_t> str, uint32_t color, float size, bool hasShadow, bool followLocalPlayer = false) {
+// When Not See through, disable hasShadow (Weird Visual Glitch)
+void _displayText(mc::Vec3 pos, xf::String<wchar_t> str, uint32_t color, float size, bool hasShadow, bool seeThroughWalls = false, bool followLocalPlayer = false) {
     mc::Font* font = mc::Minecraft::getInstance()->defaultFonts;
     code::Func<void, 0x03181508>()(); // Lighting::turnOff(void)
     mc::GlStateManager::disableCull();
-    mc::GlStateManager::disableDepthTest();
+    if (seeThroughWalls) mc::GlStateManager::disableDepthTest();
+    else                 mc::GlStateManager::enableDepthTest();
     mc::GlStateManager::enableBlend();
     mc::GlStateManager::blendFunc(4, 5);
 
@@ -183,24 +179,26 @@ void _displayText(mc::Vec3 pos, xf::String<wchar_t> str, uint32_t color, float s
     double fz = pos.z - code::Mem(0x104CAA28).as<double>();
     mc::GlStateManager::translatef(fx, fy, fz);
     if (followLocalPlayer) {
-        double diffX = pos.x - mc::Minecraft::getInstance()->thePlayer->position.x;
-        double diffY = pos.y - mc::Minecraft::getInstance()->thePlayer->position.y;
-        double diffZ = pos.z - mc::Minecraft::getInstance()->thePlayer->position.z;
+        mc::LocalPlayer* lPlayer = mc::Minecraft::getInstance()->thePlayer;
+        double diffX = pos.x - lPlayer->position.x;
+        double diffY = pos.y - (lPlayer->position.y + lPlayer->getEyeHeight());
+        double diffZ = pos.z - lPlayer->position.z;
         float dist = sqrtf(powf(diffX, 2) + powf(diffZ, 2));
         float yaw = (float) atan2(diffZ, diffX) * (180.0f / M_PI) - 90.0f;
         float pitch = (float) atan2(diffY, dist) * (180.0f / M_PI);
         mc::GlStateManager::rotatef(180.0f - yaw, 0.0f, 1.0f, 0.0f);
         mc::GlStateManager::rotatef(pitch,        1.0f, 0.0f, 0.0f);
     }
-    mc::GlStateManager::translatef(-size, 0.0f, 0.0f);
-    mc::GlStateManager::scalef(size, size, 0);
+    float lsize = (mc::toFloat(font->width(str.c_str())) * size) / 2.0f;
+    float lheight = (mc::toFloat(FONT_CHAR_HEIGHT) * size) / 2.0f;
+    mc::GlStateManager::translatef(-lsize, lheight, 0.0f);
+    mc::GlStateManager::scalef(size, -size, 1);
     if (hasShadow) font->drawShadow(str.c_str(), 0, 0, color);
     else           font->draw      (str.c_str(), 0, 0, color);
     mc::GlStateManager::popMatrix();
     mc::GlStateManager::disableBlend();
     mc::GlStateManager::enableDepthTest();
     code::Func<void, 0x0317a08c>()(); // Lighting::turnOn(void)
-    //real_renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3(font, L"Test", fx, fy, fz, 0xFFFFFF, 0, 0, true, true, 0x000000, 1.0);
 }
 
 DECL_FUNCTION(void, renderEntities__13LevelRendererFQ2_5boost25shared_ptr__tm__8_6EntityP6Cullerf, void* c, const mc_boost::shared_ptr<mc::Entity>& entity, void* b, float a) {
@@ -213,10 +211,6 @@ DECL_FUNCTION(void, renderEntities__13LevelRendererFQ2_5boost25shared_ptr__tm__8
     mc::GlStateManager::blendFunc(4, 5);
     mc::GlStateManager::disableFog();
     WorldEdit::render3D();
-    // _displayText({0, 20, 0}, L"Test", 5.0f, 0xFFFFFFFF, true, true);
-    // _displayText({0, 20, 5}, L"Test", 5.0f, 0xFFFFFFFF, true, false);
-    // _displayText({5, 20, 0}, L"Test", 5.0f, 0xFFFFFFFF, false, true);
-    // _displayText({0, 20, -5}, L"Test", 5.0f, 0xFFFFFFFF, false, false);
     mc::GlStateManager::disableBlend();
     mc::GlStateManager::enableCull();
 }
@@ -338,7 +332,7 @@ int c_main(void*) {
         xf::ItemInstanceHelper::addAttrib(item, 2, 9E12, 0, L"head");
         xf::ItemInstanceHelper::addAttrib(item, 4, 9E12, 0, L"head");
 
-        xf::ItemInstanceHelper::setName(item, L"Negative Client");
+        xf::ItemInstanceHelper::setName(item, L"Negative Client - OP Skull");
 
         mc_boost::shared_ptr<mc::Packet> packet(new mc::ServerboundSetCreativeModeSlotPacket(5, item));
         mc::Minecraft::getInstance()->getConnection(0)->send(packet);

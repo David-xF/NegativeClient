@@ -9,7 +9,7 @@
 
 class WorldEdit_StoneShovel : public WorldEdit_Tool {
 public:
-    WorldEdit_StoneShovel() : WorldEdit_Tool(273) {
+    WorldEdit_StoneShovel() : WorldEdit_Tool(itemId) {
         radius = 3;
     }
 
@@ -24,21 +24,23 @@ public:
                     mc::BlockPos position = mc::BlockPos(hitPos.x + x, hitPos.y + y, hitPos.z + z);
                     mc::Vec3 vec = mc::Vec3(mc::toFloat(position.x), mc::toFloat(position.y), mc::toFloat(position.z));
                     if (mc::toFloat(radius) >= vec.distance({mc::toFloat(hitPos.x), mc::toFloat(hitPos.y), mc::toFloat(hitPos.z)})) {
-                        vec = vec + mc::Vec3(0.0, 2.0, 0.0);
                         if (vec.distance(lastTP) >= 5.0f) {
+                            vec = vec + mc::Vec3(2.0, 2.0, 2.0);
                             teleportPacket(vec);
                             lastTP = vec;
                         }
 
+                        int id = mc::Minecraft::getInstance()->thePlayer->lvl->getBlockId(position.x, position.y, position.z);
                         if (offHand->item->getId() == 0 || offHand->getCount() == 0) {
-                            breakBlock(position, mc::ServerboundPlayerActionPacket::Action::START_BREAKING);
-                        } else {
-                            int id = mc::Minecraft::getInstance()->thePlayer->lvl->getBlockId(position.x, position.y, position.z);
                             if (id != 0) {
                                 breakBlock(position, mc::ServerboundPlayerActionPacket::Action::START_BREAKING);
-                            } else {
-                                placeBlock(position, mc::Direction::north, mc::InteractionHand::EInteractionHand::OFF_HAND);
                             }
+                        } else {
+                            if (id != 0) {
+                                breakBlock(position, mc::ServerboundPlayerActionPacket::Action::START_BREAKING);
+                            } 
+
+                            placeBlock(position, mc::Direction::north, mc::InteractionHand::EInteractionHand::OFF_HAND, offHand);
                         }
                     }
                 }
@@ -48,31 +50,25 @@ public:
 
     void onZR(mc::ItemInstance* mainHand, mc::ItemInstance* offHand, mc::BlockPos hitPos) override {
         int before = radius++;
-        if (radius > 7) radius = 1;
+        if (radius > 8) radius = 1;
         
         mc_printf(L"[WorldEdit] Radius: %d >> %d", before, radius);
         mc::ConsoleUIController::getInstance()->PlayUISFX(mc::SoundEvent::block_note_xylophone);
     }
 
-    void draw3D(mc::BlockPos hitPos) override {
-        int r = (radius * 2) + 3;
-        renderSphere(hitPos, mc::toFloat(radius), r, r);
+    void draw3D(mc::BlockPos hitPos, bool wasForced = false) override {
+        int r = (radius * 2) + 4;
+        renderSphere(hitPos, mc::toFloat(radius) + 0.5, r, r);
     }   
 
-    static void drawLine(mc::Vec3 pos1, mc::Vec3 pos2) {
+    static void renderSphere(mc::BlockPos pos, float radius, int ySeg, int xSeg) {
+        mc::Vec3 startPos = mc::Vec3(pos.x, pos.y, pos.z);
+        
         mc::BufferBuilder* builder = mc::Tesselator::getInstance()->getBuilder();
         mc::GlStateManager::disableTexture();
         mc::GlStateManager::lineWidth(5);
         mc::GlStateManager::pushMatrix();
         builder->begin(MC_GL_LINES);
-        builder->vertex(pos1.x, pos1.y, pos1.z, true);
-        builder->vertex(pos2.x, pos2.y, pos2.z, true);
-        builder->end();
-        mc::GlStateManager::popMatrix();
-    }
-
-    static void renderSphere(mc::BlockPos pos, float radius, int ySeg, int xSeg) {
-        mc::Vec3 startPos = mc::Vec3(pos.x, pos.y, pos.z);
 
         float xR = 360.0f / mc::toFloat(xSeg);
         float yR = 180.0f / mc::toFloat(ySeg);
@@ -83,13 +79,18 @@ public:
                 mc::Vec3 lookAt3 = (getLookAtVec((yR * mc::toFloat(j + 1)) - 90.0f, xR * mc::toFloat(i))     * radius) + startPos + mc::Vec3(0.0, 0.5, 0.0);
                 mc::Vec3 lookAt4 = (getLookAtVec((yR * mc::toFloat(j + 1)) - 90.0f, xR * mc::toFloat(i + 1)) * radius) + startPos + mc::Vec3(0.0, 0.5, 0.0);
 
-                drawLine(lookAt1, lookAt2);
-                drawLine(lookAt1, lookAt3);
-                drawLine(lookAt3, lookAt4);
-                drawLine(lookAt2, lookAt4);
+                drawLine(builder, lookAt1, lookAt2);
+                drawLine(builder, lookAt1, lookAt3);
+                drawLine(builder, lookAt3, lookAt4);
+                drawLine(builder, lookAt2, lookAt4);
             }
         }
+
+        builder->end();
+        mc::GlStateManager::popMatrix();
     }
+
+    static constexpr int itemId = 273;
 
 private:
     int radius;

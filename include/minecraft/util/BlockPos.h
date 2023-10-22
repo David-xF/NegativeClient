@@ -11,6 +11,10 @@ namespace mc {
 
 		BlockPos() = default;
 
+		BlockPos operator+(mc::BlockPos pos) {
+			return BlockPos(x + pos.x, y + pos.y, z + pos.z);
+		}
+
 		bool operator==(const BlockPos& pos) {
 			return code::Func<bool, 0x020c4bf4, BlockPos*, const BlockPos&>()(this, pos);
 		}

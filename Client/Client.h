@@ -32,12 +32,50 @@ public:
     static void draw(bool inMenu) {
         Client* client = Client::getInstance();
         client->fpsCounter();
+
+        auto pow = [](int a, int b) -> int {
+            int c = a;
+            for (int d = 1; d < b; d++) {
+                c = c * a;
+            }
+
+            return c;
+        };
+
+        auto getBytes = [pow](uint32_t bytes) -> char* {
+            if (bytes >= pow(10, 9)) {
+                return "gb";
+            } else if (bytes >= pow(10, 6)) {
+                return "mb";
+            } else if (bytes >= pow(10, 3)) {
+                return "kb";
+            } else {
+                return "b";
+            }
+        };
+
+        auto fix = [pow](uint32_t bytes) -> int {
+            if (bytes > pow(10, 9)) {
+                return bytes / pow(10, 9);
+            } else if (bytes > pow(10, 6)) {
+                return bytes / pow(10, 6);
+            } else if (bytes > pow(10, 3)) {
+                return bytes / pow(10, 3);
+            } else {
+                return bytes;
+            }
+        };
         
         xf::GUI::DrawHelper::renderSetup();
         mc::Font* font = mc::Minecraft::getInstance()->defaultFonts;
         xf::GUI::DrawHelper::DisplayText(font, client->getName(), 1.5, 5, 5);
-        wchar_t fpsCounterText[0x40];
-        mc_swprintf(fpsCounterText, 0x40, L"Build: %s, %s  |  FPS: %d", __DATE__, __TIME__, client->getFPS());
+        wchar_t fpsCounterText[0x70];
+        bool debugInfo = false;
+        if (debugInfo) {
+            mc_swprintf(fpsCounterText, 0x70, L"Build: %s, %s  |  FPS: %d  |  Total Memory: [%d %s  |  %d  |  %d  |  %d  |  %d]", __DATE__, __TIME__, client->getFPS(), fix(totalMemoryAllocated), getBytes(totalMemoryAllocated), totalAllocs, totalDeletes, totalAllocs - totalDeletes, fakeDeletes);
+        } else {
+            mc_swprintf(fpsCounterText, 0x70, L"Build: %s, %s  |  FPS: %d", __DATE__, __TIME__, client->getFPS());
+        }
         xf::GUI::DrawHelper::DisplayText(font, fpsCounterText, 1, 5, HEIGHT - FONT_CHAR_HEIGHT - 5);
 
         if (inMenu) return;

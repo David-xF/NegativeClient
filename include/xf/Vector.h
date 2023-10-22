@@ -1,6 +1,7 @@
 #pragma once
 
 #include <inttypes.h>
+#include <initializer_list>
 
 #include <minecraft/util/MallocOperator.h>
 
@@ -11,6 +12,16 @@ namespace xf {
         Vector() {
             data = nullptr;
             length = 0;
+        }
+
+        Vector(std::initializer_list<T> list) {
+            data = new T[list.size()];
+            length = list.size();
+            
+            int index = 0;
+            for (T t : list) {
+                data[index++] = t;
+            }
         }
 
         Vector(T t) {
@@ -28,6 +39,10 @@ namespace xf {
             for (T _t : t) {
                 data[n++] = _t;
             }
+        }
+
+        ~Vector() {
+            _delete(data);
         }
 
         void push_back(T t) {
