@@ -85,8 +85,8 @@ public:
     }
 
     void onZR(mc::ItemInstance* mainHand, mc::ItemInstance* offHand, mc::BlockPos hitPos) override {
-        xf::String<char> before;
-        xf::String<char> now;
+        const char* before;
+        const char* now;
         if (mode == SmoothMode::PLACE) {
             mode = SmoothMode::BREAK;
             before = "Place";
@@ -97,7 +97,7 @@ public:
             now = "Place";
         }
         
-        mc_printf(L"[WorldEdit] Mode: %s >> %s", before.c_str(), now.c_str());
+        mc_printf(L"[WorldEdit] Mode: %s >> %s", before, now);
         mc::ConsoleUIController::getInstance()->PlayUISFX(mc::SoundEvent::block_note_xylophone);
     }
 

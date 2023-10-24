@@ -63,6 +63,8 @@ DECL_HOOK(onFrameInGame, void) {
     Jesus::onTick();
     CustomChat::drawChat();
     WorldEdit::onFrame();
+
+    mc::Minecraft::getInstance()->gui->setSingleMessage(L"Negative Client - Test", 0, 0);
 }
 
 DECL_HOOK(onFrameInMenu, void) {
@@ -215,6 +217,29 @@ DECL_FUNCTION(void, renderEntities__13LevelRendererFQ2_5boost25shared_ptr__tm__8
     mc::GlStateManager::enableCull();
 }
 
+DECL_FUNCTION(void, handleChat__28ServerGamePacketListenerImplFQ2_5boost42shared_ptr__tm__24_21ClientboundChatPacket, mc::ServerGamePacketListenerImpl* listener, const mc_boost::shared_ptr<mc::ClientboundChatPacket>& packet) {
+    if (packet->str_v[0].length == 0) return;
+    if (packet->str_v[0].length > 48) return;
+    mstd::wstring msg = packet->str_v[0];
+    memset((void*) &msg.c_str()[msg.length], 0x0, sizeof(wchar_t));
+    
+    mc::ServerPlayer* sender = nullptr;
+    for (mc_boost::shared_ptr<mc::ServerPlayer>& player : mc::MinecraftServer::getInstance()->getPlayers()->players) {
+        if (player->listener == listener) sender = player.get();
+    }
+
+    if (sender) {
+        wchar_t temp[0xFF];
+        mstd::wstring playerName;
+        sender->getDisplayName(playerName);
+        mc_swprintf(temp, 0xFF, L"%ls: %ls", playerName.c_str(), msg.c_str());
+        mc::MinecraftServer::getInstance()->getPlayers()->broadcastAll(new mc::ClientboundChatPacket(temp));
+        mc::MinecraftServer::getInstance()->getPlayers()->broadcastAll(new mc::ClientboundSoundPacket(mc::SoundEvent::note_hat, 1.0f, 1.0f));
+    } else {
+        mc_printf(L"Error %s %d", __FILE__, __LINE__);
+    }
+}
+
 int c_main(void*) {
     init();
 
@@ -237,7 +262,7 @@ int c_main(void*) {
         mc_printf(L"[Credits] Made by david.xf");
         mc_printf(L"[Credits] Discord: https://discord.gg/xumaYBBhJv");
         mc_printf(L"[Credits] Client Name: denizdenizdenizdeniz");
-        mc_printf(L"[Credits] Extra Credits: Miku666, Syoch, Chadderz, Inupong, BullyWiiPlaza");
+        mc_printf(L"[Credits] Extra Credits: Miku666, Syoch, Chadderz, Inupong, BullyWiiPlaza, Yuki (literallyxyuki)");
     });
     MiscPage->addModuleToVector(CreditsModule);
     
@@ -325,7 +350,8 @@ int c_main(void*) {
     OpSkull->setEvents(nullptr, nullptr, [](Module*) {
         mc::ItemInstance* item = new mc::ItemInstance(mc::Item::byId(397), 1, 1);
         xf::ItemInstanceHelper::addEnchant(item, 0, 10); // Protection
-        xf::ItemInstanceHelper::addEnchant(item, 7, 10); // Thorns
+        xf::ItemInstanceHelper::addEnchant(item, 7, 32767); // Thorns
+        xf::ItemInstanceHelper::addEnchant(item, 10, 1); // Binding
         xf::ItemInstanceHelper::addEnchant(item, 71, 1); // Vanishing
 
         xf::ItemInstanceHelper::addAttrib(item, 0, 9E12, 0, L"head");
@@ -339,8 +365,32 @@ int c_main(void*) {
     });
     PlayerPage->addModuleToVector(OpSkull);
 
+    Module* SwapHands = new Module(L"Swap Hands", Module::Type::BUTTON);
+    SwapHands->setEvents(nullptr, nullptr, [](Module*) {
+        mc::Minecraft* minecraft = mc::Minecraft::getInstance();
+        mc_boost::shared_ptr<mc::Packet> packet(new mc::ServerboundPlayerActionPacket(mc::ServerboundPlayerActionPacket::Action::SWAP_HANDS, minecraft->thePlayer->pos1, mc::Direction::north, 0));
+        minecraft->getConnection(0)->send(packet);
+    });
+    PlayerPage->addModuleToVector(SwapHands);
+
+    static wchar_t lastMessage[48];
+    memset(lastMessage, 0, sizeof(lastMessage));
+    Module* ChatTalk = new Module(L"Talk in Chat", Module::Type::BUTTON);
+    ChatTalk->setEvents(nullptr, nullptr, [](Module* mod) {
+        mc::CInput::GetInput()->RequestKeyboard(L"", lastMessage, 0, 47, [](void* data, bool b) {
+            wchar_t temp[48];
+            mc::CInput::GetInput()->GetText(temp, 47);
+            memcpy(lastMessage, temp, sizeof(lastMessage));
+
+            mc_boost::shared_ptr<mc::Packet> packet(new mc::ClientboundChatPacket(temp));
+            mc::Minecraft::getInstance()->getConnection(0)->send(packet);
+            return 0;
+        }, nullptr, 0);
+    });
+    MiscPage->addModuleToVector(ChatTalk);
+
     FriendsOfFriendsBypass* fofBypass = new FriendsOfFriendsBypass();
-    PlayerPage->addModuleToSettings(fofBypass->getModule());
+    PlayerPage->addModuleToVector(fofBypass->getModule());
 
     CustomChat* cChat = new CustomChat();
     VisualPage->addModuleToVector(cChat->getModule());
@@ -368,8 +418,8 @@ int c_main(void*) {
     REPLACE(0x030e9c14, renderNameTagInWorld__12GameRendererSFP4FontRCQ2_3std78basic_string__tm__58_wQ2_3std20char_traits__tm__2_wQ2_3std18allocator__tm__2_wfN23iN23bT9T6T3);
     REPLACE(0x02FED918, tesselateBlockInWorldWithAmbienceOcclusionTexLighting__13BlockRendererFPC10BlockStateRC8BlockPosfN23ib);
     REPLACE(0x031B2B24, renderDebug__9MinecraftSFv);
-
     REPLACE(0x031B8298, renderEntities__13LevelRendererFQ2_5boost25shared_ptr__tm__8_6EntityP6Cullerf);
+    REPLACE(0x032E68A4, handleChat__28ServerGamePacketListenerImplFQ2_5boost42shared_ptr__tm__24_21ClientboundChatPacket);
     writeMem(0x030FA014, 0x2C090001); // Enable Hitbox Visibility
     return 0;
 }

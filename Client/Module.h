@@ -149,8 +149,10 @@ public:
     void right() {
         if (pageIndex == -1) {
             if (pageVector[selectIndex]->getType() == Type::PAGE) {
-                pageIndex = selectIndex;
-                pageVector[pageIndex]->reset();
+                if (pageVector[selectIndex]->getPageVector().getSize() > 0) {
+                    pageIndex = selectIndex;
+                    pageVector[pageIndex]->reset();
+                }
             } else {
                 if (pageVector[selectIndex]->isSlider()) {
                     Slider<>* _slider = (Slider<>*) pageVector[selectIndex]->getSlider();

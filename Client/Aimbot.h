@@ -114,12 +114,12 @@ public:
         mc::Level* level = lPlayer->lvl;
 
 
-        bool isRight = false;
+        bool isCorrect = false;
         for (int i = 0; i < 3; i++) {
-            if (lPlayer->lvl == mc::Minecraft::getInstance()->getLevel(i)) isRight = true;
+            if (lPlayer->lvl == mc::Minecraft::getInstance()->getLevel(i)) isCorrect = true;
         }
 
-        if (!isRight) return;
+        if (!isCorrect) return;
 
         if (!level) return;    
         mc::Entity* nearest = staticAimbot->getSelectedEntity();

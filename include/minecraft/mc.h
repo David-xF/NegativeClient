@@ -51,6 +51,9 @@
 #include "network/listener/ClientPacketListener.h"
 #include "network/listener/ServerGamePacketListenerImpl.h"
 
+#include "network/packet/clientbound/ClientboundChatPacket.h"
+#include "network/packet/clientbound/ClientboundSoundPacket.h"
+
 // #include "network/packet/clientbound/"
 #include "network/packet/serverbound/ServerboundContainerClickPacket.h"
 #include "network/packet/serverbound/ServerboundInteractPacket.h"

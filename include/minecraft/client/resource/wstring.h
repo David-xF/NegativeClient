@@ -20,6 +20,11 @@ namespace mstd {
             return code::Func<const mstd::wstring&, 0x030E8BC4, wstring*, const wchar_t*, int>()(this, _str, _length);
         }
 
+        bool operator==(const wchar_t* _str) {
+            const wchar_t* __str = c_str();
+            return wcscmp(__str, _str);
+        }
+
         uint32_t unk_0x0; // 0x00
         wchar_t str[8];   // 0x04
         wchar_t* pointer; // 0x14

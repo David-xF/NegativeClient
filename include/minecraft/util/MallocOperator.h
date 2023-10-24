@@ -6,24 +6,12 @@
 
 #include <string>
 
-uint32_t totalMemoryAllocated = 0;
-uint32_t totalAllocs = 0;
-uint32_t totalDeletes = 0;
-uint32_t fakeDeletes = 0;
-
 void _delete(void* ptr) {
-    if (ptr) {
-        totalDeletes++;
-	    code::Func<void, 0x0382ABB4, void*>()(ptr);
-    } else {
-        fakeDeletes++;
-    }
+	code::Func<void, 0x0382ABB4, void*>()(ptr);
 }
 
 template<typename T>
 T* _new(size_t size) {
-    totalMemoryAllocated += (sizeof(T) * size);
-    totalAllocs++;
     return code::Func<T*, 0x0382AACC, size_t>()(sizeof(T) * size);
 }
 
