@@ -32,6 +32,7 @@ public:
             }, nullptr, 0);
         });
         _module->addModuleToSettings(setColModule);
+        _module->addModuleToSettings(new Module(L"Tracers", Module::Type::MODULE));
     }
 
     static void draw(void* renderer, const mc_boost::shared_ptr<mc::Entity>& ref, uint32_t unk, float x, float y, float z, float a, float b) {
@@ -80,6 +81,19 @@ public:
             color & 0xFFFFFF, (color & 0xFF000000) >> 24
         );
 
+        if (staticESP->shouldDrawTracers()) {
+            mc::BufferBuilder* builder = mc::Tesselator::getInstance()->getBuilder();
+            mc::GlStateManager::disableTexture();
+            mc::GlStateManager::lineWidth(5);
+            mc::GlStateManager::pushMatrix();
+            builder->begin(MC_GL_LINES);
+            builder->color(0, 0xFF);
+            builder->vertex(0, 0, 0);
+            builder->vertex(x, y, z);
+            builder->end();
+            mc::GlStateManager::popMatrix();
+        }
+
         mc::GlStateManager::disableBlend();
         mc::GlStateManager::enableDepthTest();
         code::Func<void, 0x0317a08c>()(); // Lighting::turnOn(void)
@@ -99,6 +113,10 @@ public:
 
     bool playerColor() {
         return _module->getPageVector()[2]->getState();
+    }
+
+    bool shouldDrawTracers() {
+        return _module->getPageVector()[4]->getState();
     }
 
     void setColor(uint32_t col) {

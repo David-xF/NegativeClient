@@ -38,6 +38,7 @@ public:
                             mc_boost::shared_ptr<mc::Packet> packet1(new mc::ServerboundSetCreativeModeSlotPacket(45, new mc::ItemInstance(mc::Item::byId(id), 1, aux)));
                             mc::Minecraft::getInstance()->getConnection(0)->send(packet1);
                             teleportPacket({mc::toFloat(position.x + 2), mc::toFloat(position.y - t + 3), mc::toFloat(position.x + 2)});
+                            // Doesn't work for some reason
                             placeBlock({position.x, position.y - t + 1, position.z}, mc::Direction::north, mc::InteractionHand::EInteractionHand::OFF_HAND, new mc::ItemInstance(mc::Item::byId(id), 1, aux));
                             mc_boost::shared_ptr<mc::Packet> packet2(new mc::ServerboundSetCreativeModeSlotPacket(45, offHand));
                             mc::Minecraft::getInstance()->getConnection(0)->send(packet2);

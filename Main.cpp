@@ -29,6 +29,7 @@
 #include "Client/Module.h"
 #include "Client/Scaffold.h"
 #include "Client/SeeNameTags.h"
+#include "Client/WorldChat.h"
 #include "Client/WorldEdit.h"
 #include "Client/XRay.h"
 
@@ -218,26 +219,7 @@ DECL_FUNCTION(void, renderEntities__13LevelRendererFQ2_5boost25shared_ptr__tm__8
 }
 
 DECL_FUNCTION(void, handleChat__28ServerGamePacketListenerImplFQ2_5boost42shared_ptr__tm__24_21ClientboundChatPacket, mc::ServerGamePacketListenerImpl* listener, const mc_boost::shared_ptr<mc::ClientboundChatPacket>& packet) {
-    if (packet->str_v[0].length == 0) return;
-    if (packet->str_v[0].length > 48) return;
-    mstd::wstring msg = packet->str_v[0];
-    memset((void*) &msg.c_str()[msg.length], 0x0, sizeof(wchar_t));
-    
-    mc::ServerPlayer* sender = nullptr;
-    for (mc_boost::shared_ptr<mc::ServerPlayer>& player : mc::MinecraftServer::getInstance()->getPlayers()->players) {
-        if (player->listener == listener) sender = player.get();
-    }
-
-    if (sender) {
-        wchar_t temp[0xFF];
-        mstd::wstring playerName;
-        sender->getDisplayName(playerName);
-        mc_swprintf(temp, 0xFF, L"%ls: %ls", playerName.c_str(), msg.c_str());
-        mc::MinecraftServer::getInstance()->getPlayers()->broadcastAll(new mc::ClientboundChatPacket(temp));
-        mc::MinecraftServer::getInstance()->getPlayers()->broadcastAll(new mc::ClientboundSoundPacket(mc::SoundEvent::note_hat, 1.0f, 1.0f));
-    } else {
-        mc_printf(L"Error %s %d", __FILE__, __LINE__);
-    }
+    WorldChat::handleChat(listener, packet);
 }
 
 int c_main(void*) {
@@ -373,21 +355,8 @@ int c_main(void*) {
     });
     PlayerPage->addModuleToVector(SwapHands);
 
-    static wchar_t lastMessage[48];
-    memset(lastMessage, 0, sizeof(lastMessage));
-    Module* ChatTalk = new Module(L"Talk in Chat", Module::Type::BUTTON);
-    ChatTalk->setEvents(nullptr, nullptr, [](Module* mod) {
-        mc::CInput::GetInput()->RequestKeyboard(L"", lastMessage, 0, 47, [](void* data, bool b) {
-            wchar_t temp[48];
-            mc::CInput::GetInput()->GetText(temp, 47);
-            memcpy(lastMessage, temp, sizeof(lastMessage));
-
-            mc_boost::shared_ptr<mc::Packet> packet(new mc::ClientboundChatPacket(temp));
-            mc::Minecraft::getInstance()->getConnection(0)->send(packet);
-            return 0;
-        }, nullptr, 0);
-    });
-    MiscPage->addModuleToVector(ChatTalk);
+    WorldChat* worldChat = new WorldChat();
+    MiscPage->addModuleToVector(worldChat->getModule());
 
     FriendsOfFriendsBypass* fofBypass = new FriendsOfFriendsBypass();
     PlayerPage->addModuleToVector(fofBypass->getModule());

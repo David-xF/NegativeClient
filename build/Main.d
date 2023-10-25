@@ -119,6 +119,7 @@ Main.o: C:/Users/David/Documents/Workspace/NegativeClient/Main.cpp \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/Module.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/Scaffold.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/SeeNameTags.h \
+ C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldChat.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/Tool.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/WoodenAxe.h \
@@ -249,6 +250,7 @@ C:/Users/David/Documents/Workspace/NegativeClient/Client/Killaura.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/Module.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/Scaffold.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/SeeNameTags.h:
+C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldChat.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/Tool.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/WoodenAxe.h:

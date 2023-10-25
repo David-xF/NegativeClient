@@ -21,7 +21,6 @@ public:
     }
 
     static void onDefaultEvent(Slider<T>* _this) {
-        mc_printf(L"Default");
         return;
     }
 

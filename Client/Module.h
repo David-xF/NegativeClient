@@ -131,7 +131,7 @@ public:
     }
 
     bool hasSettings() {
-        if (getType() == Type::MODULE) {
+        if (getType() == Type::MODULE || getType() == Type::BUTTON) {
             if (pageVector.getSize() > 0) return true;
             return false;
         } else {
