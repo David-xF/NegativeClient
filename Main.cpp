@@ -333,7 +333,7 @@ int c_main(void*) {
         mc::ItemInstance* item = new mc::ItemInstance(mc::Item::byId(397), 1, 1);
         xf::ItemInstanceHelper::addEnchant(item, 0, 10); // Protection
         xf::ItemInstanceHelper::addEnchant(item, 7, 32767); // Thorns
-        xf::ItemInstanceHelper::addEnchant(item, 10, 1); // Binding
+        xf::ItemInstanceHelper::addEnchant(item, 10, 1); // Binding 
         xf::ItemInstanceHelper::addEnchant(item, 71, 1); // Vanishing
 
         xf::ItemInstanceHelper::addAttrib(item, 0, 9E12, 0, L"head");

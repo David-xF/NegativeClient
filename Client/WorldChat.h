@@ -35,8 +35,10 @@ public:
         }
     }; 
     
+    static const int maxLength = 47;
+
     WorldChat() {
-        _module = new Module(L"Talk in Chat", Module::Type::BUTTON);
+        _module = new Module(L"World Chat", Module::Type::MODULE);
         staticWorldChat = this;
 
         formats = new mstd::wstring[5];
@@ -45,12 +47,18 @@ public:
         formats[2] = L"<%ls>: %ls";
         formats[3] = L"[%ls] %ls";
         formats[4] = L"[%ls]: %ls";
-
-        const int maxLength = 47;
+        
         lastMessage = new wchar_t[maxLength + 1];
         memset(lastMessage, 0x0, sizeof(wchar_t) * maxLength);
 
-        _module->setEvents(nullptr, nullptr, [](Module* mod) {
+        _module->addModuleToSettings(new Module(L"Store Last Message", Module::Type::MODULE));
+
+        Module* sliderMod = new Module(L"Format", Module::Type::SLIDER);
+        sliderMod->setSlider(new FormatSlider());
+        _module->addModuleToSettings(sliderMod);
+
+         _module->addModuleToSettings(new Module(L"Talk in Chat", Module::Type::BUTTON));
+        _module->getPageVector()[2]->setEvents(nullptr, nullptr, [](Module* mod) {
             mc::CInput::GetInput()->RequestKeyboard(L"", staticWorldChat->keepLastMessage() ? staticWorldChat->getLastMessage() : L"", 0, maxLength, [](void* data, bool b) {
                 wchar_t temp[maxLength + 1];
                 mc::CInput::GetInput()->GetText(temp, maxLength);
@@ -62,16 +70,11 @@ public:
                 return 0;
             }, mod, 0);
         });
-
-        _module->addModuleToSettings(new Module(L"Store Last Message", Module::Type::MODULE));
-
-        Module* sliderMod = new Module(L"Format", Module::Type::SLIDER);
-        sliderMod->setSlider(new FormatSlider());
-        _module->addModuleToSettings(sliderMod);
     }
 
     static void handleChat(mc::ServerGamePacketListenerImpl* listener, const mc_boost::shared_ptr<mc::ClientboundChatPacket>& packet) {
         if (packet->str_v[0].length == 0) return; // No Empty Message
+        if (!staticWorldChat->getModule()->getState()) return;
         mstd::wstring msg = packet->str_v[0];
         memset((void*) &msg.c_str()[msg.length], 0x0, sizeof(wchar_t)); // I don't know why
 
@@ -92,10 +95,10 @@ public:
         }
 
         if (sender) {
-            wchar_t temp[0xFF];
+            wchar_t temp[maxLength + 1];
             mstd::wstring playerName;
             sender->getDisplayName(playerName);
-            mc_swprintf(temp, 0xFF, staticWorldChat->getFormats()[staticWorldChat->formatIndex()].c_str(), playerName.c_str(), msg.c_str());
+            mc_swprintf(temp, maxLength + 1, staticWorldChat->getFormats()[staticWorldChat->formatIndex()].c_str(), playerName.c_str(), msg.c_str());
             mc::MinecraftServer::getInstance()->getPlayers()->broadcastAll(new mc::ClientboundChatPacket(temp));
             mc::MinecraftServer::getInstance()->getPlayers()->broadcastAll(new mc::ClientboundSoundPacket(mc::SoundEvent::note_hat, 1.0f, 1.0f));
         } else {
