@@ -127,6 +127,7 @@ Main.o: C:/Users/David/Documents/Workspace/NegativeClient/Main.cpp \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/IronShovel.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/GoldShovel.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/StoneShovel.h \
+ C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/StonePickAxe.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/XRay.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/xf/Benchmark.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/xf/ItemInstanceHelper.h
@@ -258,6 +259,7 @@ C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/Tool.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/IronShovel.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/GoldShovel.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/StoneShovel.h:
+C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/StonePickAxe.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/XRay.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/xf/Benchmark.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/xf/ItemInstanceHelper.h:

@@ -8,6 +8,7 @@
 #include "WorldEdit/IronShovel.h"
 #include "WorldEdit/GoldShovel.h"
 #include "WorldEdit/StoneShovel.h"
+#include "WorldEdit/StonePickAxe.h"
 
 #include <minecraft/mc.h>
 
@@ -62,6 +63,7 @@ public:
         tools.push_back(new WorldEdit_StoneShovel());
         tools.push_back(new WorldEdit_IronShovel((Slider<int>*) slider));
         tools.push_back(new WorldEdit_GoldShovel());
+        tools.push_back(new WorldEdit_StonePickAxe(&getPos(1), &getPos(2)));
     }
 
     static void onZL(mc::ItemInstance* mainHand, mc::ItemInstance* offHand) {

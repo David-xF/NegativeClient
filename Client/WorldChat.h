@@ -35,7 +35,7 @@ public:
         }
     }; 
     
-    static const int maxLength = 47;
+    static const int maxLength = 77;
 
     WorldChat() {
         _module = new Module(L"World Chat", Module::Type::MODULE);
@@ -95,10 +95,11 @@ public:
         }
 
         if (sender) {
-            wchar_t temp[maxLength + 1];
+            wchar_t temp[150];
             mstd::wstring playerName;
             sender->getDisplayName(playerName);
-            mc_swprintf(temp, maxLength + 1, staticWorldChat->getFormats()[staticWorldChat->formatIndex()].c_str(), playerName.c_str(), msg.c_str());
+            mc_swprintf(temp, 150, staticWorldChat->getFormats()[staticWorldChat->formatIndex()].c_str(), playerName.c_str(), msg.c_str());
+            if (mstd::wstring(temp).length > 95) return;
             mc::MinecraftServer::getInstance()->getPlayers()->broadcastAll(new mc::ClientboundChatPacket(temp));
             mc::MinecraftServer::getInstance()->getPlayers()->broadcastAll(new mc::ClientboundSoundPacket(mc::SoundEvent::note_hat, 1.0f, 1.0f));
         } else {
