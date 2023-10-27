@@ -41,6 +41,8 @@ public:
         _module = new Module(L"World Chat", Module::Type::MODULE);
         staticWorldChat = this;
 
+        _module->setState(true);
+
         formats = new mstd::wstring[5];
         formats[0] = L"%ls: %ls";
         formats[1] = L"<%ls> %ls";

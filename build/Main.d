@@ -122,8 +122,10 @@ Main.o: C:/Users/David/Documents/Workspace/NegativeClient/Main.cpp \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldChat.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/Tool.h \
- C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/WoodenAxe.h \
+ C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/Stick.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/Tool.h \
+ C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/IronAxe.h \
+ C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/WoodenAxe.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/IronShovel.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/GoldShovel.h \
  C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/StoneShovel.h \
@@ -254,8 +256,10 @@ C:/Users/David/Documents/Workspace/NegativeClient/Client/SeeNameTags.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldChat.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/Tool.h:
-C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/WoodenAxe.h:
+C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/Stick.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/Tool.h:
+C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/IronAxe.h:
+C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/WoodenAxe.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/IronShovel.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/GoldShovel.h:
 C:/Users/David/Documents/Workspace/NegativeClient/Client/WorldEdit/StoneShovel.h:

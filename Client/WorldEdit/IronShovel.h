@@ -75,7 +75,7 @@ public:
             mc::Vec3 vec = mc::Vec3(mc::toFloat(pos.x), mc::toFloat(pos.y + 2), mc::toFloat(pos.z));
             teleportPacket(vec);
             if (mode == SmoothMode::PLACE) {
-                placeBlock(pos, mc::Direction::up, mc::InteractionHand::EInteractionHand::OFF_HAND, offHand);
+                placeBlock(pos, mc::Direction::up, mc::InteractionHand::EInteractionHand::OFF_HAND);
             } else {
                 breakBlock(pos, mc::ServerboundPlayerActionPacket::Action::START_BREAKING);
             }
@@ -109,7 +109,7 @@ public:
                 FOR_SPHERE(z) {
                     mc::BlockPos position = mc::BlockPos(hitPos.x + x, hitPos.y + y, hitPos.z + z);
                     if (isValidPlace(position)) {
-                        drawLineBox({position.x, position.y, position.z, position.x + 1, position.y + 1, position.z + 1});
+                        drawLineBox({position.x, position.y, position.z, position.x + 1, position.y + 1, position.z + 1}, mode == SmoothMode::PLACE ? 0x00FF00 : 0xFF0000);
                     }
                 }
             }

@@ -31,16 +31,19 @@ public:
                         }
 
                         int id = mc::Minecraft::getInstance()->thePlayer->lvl->getBlockId(position.x, position.y, position.z);
+                        int aux = mc::Minecraft::getInstance()->thePlayer->lvl->getBlockData(position.x, position.y, position.z);
                         if (offHand->item->getId() == 0 || offHand->getCount() == 0) {
                             if (id != 0) {
                                 breakBlock(position, mc::ServerboundPlayerActionPacket::Action::START_BREAKING);
                             }
                         } else {
-                            if (id != 0) {
-                                breakBlock(position, mc::ServerboundPlayerActionPacket::Action::START_BREAKING);
-                            } 
+                            if (id != offHand->item->getId() || aux != offHand->aux) {
+                                if (id != 0) {
+                                    breakBlock(position, mc::ServerboundPlayerActionPacket::Action::START_BREAKING);
+                                } 
 
-                            placeBlock(position, mc::Direction::north, mc::InteractionHand::EInteractionHand::OFF_HAND, offHand);
+                                placeBlock(position, mc::Direction::north, mc::InteractionHand::EInteractionHand::OFF_HAND);
+                            }
                         }
                     }
                 }

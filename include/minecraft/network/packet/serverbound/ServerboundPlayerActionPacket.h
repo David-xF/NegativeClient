@@ -10,7 +10,7 @@ namespace mc {
     class ServerboundPlayerActionPacket : public Packet {
     public:
         enum Action {
-            START_BREAKING, STOP_BREAKING, FINISH_BREAKING, UNK, DROP, STOP_USING, SWAP_HANDS
+            START_BREAKING, STOP_BREAKING, FINISH_BREAKING, DROP_ALL, DROP_SINGLE, RELEASE, SWAP_HANDS
         };
 
         ServerboundPlayerActionPacket(Action arg2, const BlockPos& pos, const struct Direction* dir, int arg5) {
