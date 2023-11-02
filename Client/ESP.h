@@ -29,7 +29,7 @@ public:
                 mc::CInput::GetInput()->GetText(temp, 9);
                 staticESP->setColor(xf::String<wchar_t>::hexStrToInt(temp));
                 return 0;
-            }, nullptr, 0);
+            }, nullptr, mc::CInput::KeyboardMode::FULL);
         });
         _module->addModuleToSettings(setColModule);
         _module->addModuleToSettings(new Module(L"Tracers", Module::Type::MODULE));

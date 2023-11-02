@@ -15,7 +15,7 @@ namespace xf {
         }
 
         Vector(std::initializer_list<T> list) {
-            data = new T[list.size()];
+            data = _new<T>(list.size());
             length = list.size();
             
             int index = 0;
@@ -25,14 +25,14 @@ namespace xf {
         }
 
         Vector(T t) {
-            data = new T[1];
+            data = _new<T>(1);
             length = 1;
 
             data[0] = t;
         }
 
         Vector(Vector<T>& t) {
-            data = new T[t.getSize()];
+            data = _new<T>(t.getSize());
             length = t.getSize();
             
             int n = 0;
@@ -47,13 +47,13 @@ namespace xf {
 
         void push_back(T t) {
             if (!data || length == 0) {
-                data = new T[1];
+                data = _new<T>(1);
                 length = 1;
 
                 data[0] = t;
             } else {
                 length++;
-                T* n_data = new T[length];
+                T* n_data = _new<T>(length);
                 for (int i = 0; i < length - 1; i++) n_data[i] = data[i];
                 n_data[length - 1] = t;
                 _delete(data);
@@ -63,13 +63,13 @@ namespace xf {
 
         void push_front(T t) {
             if (!data || length == 0) {
-                data = new T[1];
+                data = _new<T>(1);
                 length = 1;
 
                 data[0] = t;
             } else {
                 length++;
-                T* n_data = new T[length];
+                T* n_data = _new<T>(length);
                 for (int i = 0; i < length - 1; i++) n_data[i + 1] = data[i];
                 n_data[0] = t;
                 _delete(data);

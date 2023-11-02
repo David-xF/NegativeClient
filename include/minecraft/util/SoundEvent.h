@@ -114,6 +114,9 @@ namespace mc {
         static SoundEvent* block_note_guitar               asm("0x104C489C");
         static SoundEvent* item_trident_riptide2           asm("0x104C4954");
 
+
+        static SoundEvent* ear_rape asm("0x104C4728");
+
         void getName(const mstd::wstring& name) {
             code::Func<void, 0x028E11EC, SoundEvent*, const mstd::wstring&>()(this, name);
         }

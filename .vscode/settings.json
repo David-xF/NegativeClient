@@ -9,6 +9,8 @@
         "utility": "cpp",
         "string": "cpp",
         "typeinfo": "cpp",
-        "limits": "cpp"
-    }
+        "limits": "cpp",
+        "yuki": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }

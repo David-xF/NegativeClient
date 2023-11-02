@@ -99,7 +99,8 @@ namespace xf {
             int t = 0;
             int m = 0;
             int l = input.length();
-            input = input.toLowerCase();
+            int _l = l;
+            String<T> _input = input.toLowerCase();
 
             auto conv = [&](T c) {
                 if (c >= '0' && '9' >= c) {
@@ -113,8 +114,8 @@ namespace xf {
                 return 0;
             };
             
-            for (int i = 0; i < input.length(); i++) {
-                t = conv(input.c_str()[i]);
+            for (int i = 0; i < _l; i++) {
+                t = conv(_input.c_str()[i]);
                 l--;
                 int n = 1;
                 for (int j = 0; j < l; j++) n *= 16;

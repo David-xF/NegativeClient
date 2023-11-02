@@ -44,11 +44,11 @@ namespace mc {
             code::Func<void, 0x031EAAC8, LocalPlayer*, const mc_boost::shared_ptr<struct Container>&>()(this, container);
         }
 
-		struct ClientPacketListener* listener;
+		uint32_t field_0x868;
         uint32_t field_0x86C;
         uint32_t field_0x870;
         uint32_t field_0x874;
-        uint32_t field_0x878;
+        struct ClientPacketListener* listener;
         uint32_t field_0x87C;
         uint32_t field_0x880;
         uint32_t field_0x884;

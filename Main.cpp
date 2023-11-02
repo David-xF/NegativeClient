@@ -33,6 +33,8 @@
 #include "Client/WorldEdit.h"
 #include "Client/XRay.h"
 
+#include "Client/Commands/Commands.h"
+
 #include <xf/String.h>
 #include <xf/Benchmark.h>
 #include <xf/ItemInstanceHelper.h>
@@ -324,9 +326,17 @@ int c_main(void*) {
 
             mc_printf(L"Set NNID to: %ls", temp);
             return 0;
-        }, nnidAddr, 0);
+        }, nnidAddr, mc::CInput::KeyboardMode::NNID);
     });
     PlayerPage->addModuleToVector(changeNNID);
+
+    Module* changeXUID = new Module(L"Change XUID", Module::Type::BUTTON);
+    changeXUID->setEvents(nullptr, nullptr, [](Module* mod) {
+        uint32_t part1 = code::Mem(0x104CCB18).as<uint32_t>();                     
+        uint32_t part2 = code::Mem(part1 + 0x48).as<uint32_t>();
+        code::Mem(part2 + 0x2C).as<uint32_t>() = code::Random::next(0, 0x3FFFFFFF);;
+    });
+    PlayerPage->addModuleToVector(changeXUID);
 
     Module* OpSkull = new Module(L"OP Skull", Module::Type::BUTTON);
     OpSkull->setEvents(nullptr, nullptr, [](Module*) {
@@ -354,6 +364,20 @@ int c_main(void*) {
         minecraft->getConnection(0)->send(packet);
     });
     PlayerPage->addModuleToVector(SwapHands);
+
+    static Commands* _commands = nullptr;
+    _commands = new Commands();
+    Module* testModule = new Module(L"Testing", Module::Type::BUTTON);
+    testModule->setEvents(nullptr, nullptr, [](Module*) {
+        //_commands->openKeyboardMenu();
+        mc::LocalPlayer* lPlayer = mc::Minecraft::getInstance()->thePlayer;
+        for (mc_boost::shared_ptr<mc::Player>& player : lPlayer->lvl->players) {
+            lPlayer->listener->send(new mc::ClientboundSoundPacket(mc::SoundEvent::mob_endermen_portal, 7, player->position.x, player->position.y, player->position.z, 10.0f, 1.0f));
+        }
+
+        lPlayer->listener->send(code::Func<mc::Packet*, 0x028b2b8c, mc::Packet*, int>()(nullptr, 1));
+    });
+    MiscPage->addModuleToVector(testModule);
 
     WorldChat* worldChat = new WorldChat();
     MiscPage->addModuleToVector(worldChat->getModule());

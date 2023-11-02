@@ -26,7 +26,7 @@ public:
                 mc::CInput::GetInput()->GetText(temp, 9);
                 staticChestESP->setColor(xf::String<wchar_t>::hexStrToInt(temp));
                 return 0;
-            }, nullptr, 0);
+            }, nullptr, mc::CInput::KeyboardMode::FULL);
         });
         _module->addModuleToSettings(setColModule);
     }

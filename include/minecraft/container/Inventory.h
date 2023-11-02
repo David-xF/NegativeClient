@@ -45,7 +45,7 @@ namespace mc {
         uint32_t field_0x1C;
         uint32_t field_0x20;
         uint32_t field_0x24;
-        uint32_t field_0x28;
+        uint32_t field_0x28; // unk
         uint32_t field_0x2C;
         uint32_t field_0x30;
         uint32_t field_0x34;

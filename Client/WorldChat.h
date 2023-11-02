@@ -70,7 +70,7 @@ public:
                 mc_boost::shared_ptr<mc::Packet> packet(new mc::ClientboundChatPacket(temp));
                 mc::Minecraft::getInstance()->getConnection(0)->send(packet);
                 return 0;
-            }, mod, 0);
+            }, mod, mc::CInput::KeyboardMode::FULL);
         });
     }
 
