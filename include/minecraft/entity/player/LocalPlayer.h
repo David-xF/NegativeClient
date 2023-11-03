@@ -8,8 +8,8 @@
 namespace mc {
     class LocalPlayer : public Player {
     public:
-		void playSound(struct SoundEvent* sound) {
-			code::Func<void, 0x031EA16C, float, float, LocalPlayer*, struct SoundEvent*>()(1.0f, 1.0f, this, sound);
+		void playSound(struct SoundEvent* sound, float vol = 1.0f, float pitch = 1.0f) {
+			code::Func<void, 0x031EA16C, float, float, LocalPlayer*, struct SoundEvent*>()(vol, pitch, this, sound);
 		}
 
 		void setAndBroadcastCustomSkin(uint32_t skinID) {
