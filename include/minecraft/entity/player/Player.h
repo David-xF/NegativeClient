@@ -103,22 +103,8 @@ namespace mc {
 		uint32_t field_0x620;
 		uint32_t field_0x624;
 		uint32_t field_0x628;
-		uint32_t field_0x62C;
-		uint32_t field_0x630;
-		uint32_t field_0x634;
-		uint32_t field_0x638;
-		uint32_t field_0x63C;
-		uint32_t field_0x640;
-		uint32_t field_0x644;
-		uint32_t field_0x648;
-		uint32_t field_0x64C;
-		uint32_t field_0x650;
-		uint32_t field_0x654;
-		uint32_t field_0x658;
-		uint32_t field_0x65C;
-		uint32_t field_0x660;
-		uint32_t field_0x664;
-		uint32_t field_0x668;
+		mstd::wstring customSkinPath;
+		mstd::wstring customCapePath;
 		uint32_t field_0x66C;
 		uint32_t field_0x670;
 		uint32_t field_0x674;
@@ -132,7 +118,7 @@ namespace mc {
 		uint32_t field_0x694;
 		uint32_t field_0x698;
 		uint32_t field_0x69C;
-		mstd::wstring name;
+		mstd::wstring _name;
 		uint32_t field_0x6C0;
 		uint32_t field_0x6C4;
 		uint32_t field_0x6C8;
@@ -158,16 +144,10 @@ namespace mc {
 		float xpProgress;
 		mc_boost::shared_ptr<Entity> thrownItem;
 		uint32_t field_0x730;
-		float bhop; // idk
+		float redirection; // default = 0.02f
 		uint32_t field_0x738;
 		uint32_t field_0x73C;
-		mc_boost::shared_ptr<uint32_t> field_0x740; // i Guess that's Kinda Right, Maybe change type from uint32_t to *UNKNOWN*
-		uint32_t field_0x748;
-		uint32_t field_0x74C;
-		uint32_t field_0x750;
-		uint32_t field_0x754;
-		uint32_t field_0x758;
-		uint32_t field_0x75C;
+		mstd::wstring name;
 		uint32_t field_0x760;
 		uint32_t field_0x764;
 		uint32_t field_0x768;
@@ -187,8 +167,8 @@ namespace mc {
 		uint32_t field_0x7D0;
 		uint32_t field_0x7D4;
 		uint32_t field_0x7D8;
-		uint32_t skin;
-		uint32_t cape;
+		uint32_t customSkinId;
+		uint32_t customCapeId;
 		uint32_t colourIndex;
 		uint32_t field_0x7E8;
 		uint32_t field_0x7EC;

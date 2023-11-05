@@ -116,7 +116,7 @@ public:
 
         if (!isStillAvailable) return;
 
-        auto path = mc::CMinecraftApp::getSkinPathFromId(nullptr, target->skin);
+        auto path = mc::CMinecraftApp::getSkinPathFromId(nullptr, target->customSkinId);
         uint32_t texture_id = mc::Minecraft::getInstance()->textures->loadMemTexture(path, 0x150);
 
         const float sizeX = 150;

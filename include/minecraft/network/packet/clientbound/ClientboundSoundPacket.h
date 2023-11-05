@@ -4,13 +4,14 @@
 
 #include "../Packet.h"
 #include "../../../util/SoundEvent.h"
+#include "../../../util/SoundSource.h"
 
 namespace mc {
     class ClientboundSoundPacket : public Packet {
     public:
         // ClientboundSoundPacket::ClientboundSoundPacket(SoundEvent const *, SoundSource::ESoundSource, double, double, double, float, float)
-        ClientboundSoundPacket(SoundEvent* sound, int unki, double x, double y, double z, float vol, float pitch) {
-            code::Func<void, 0x02229070, ClientboundSoundPacket*, SoundEvent*, int, double, double, double, float, float>()(this, sound, unki, x, y, z, vol, pitch);
+        ClientboundSoundPacket(SoundEvent* sound, SoundSource::ESoundSource source, double x, double y, double z, float vol, float pitch) {
+            code::Func<void, 0x02229070, ClientboundSoundPacket*, SoundEvent*, SoundSource::ESoundSource, double, double, double, float, float>()(this, sound, source, x, y, z, vol, pitch);
         }
 
         ClientboundSoundPacket(SoundEvent* sound, float vol = 1.0f, float pitch = 1.0f) {

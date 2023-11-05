@@ -63,7 +63,7 @@ namespace mc {
         uint32_t field_0x8A8;
         uint32_t field_0x8AC;
         uint32_t field_0x8B0;
-        uint32_t field_0x8B4; // ConsoleUIController*
+        struct ConsoleUIController* uiController;
         uint32_t field_0x8B8;
         uint32_t field_0x8BC;
         uint32_t field_0x8C0;

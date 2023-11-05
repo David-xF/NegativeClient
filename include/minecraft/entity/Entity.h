@@ -143,9 +143,9 @@ namespace mc {
 		uint32_t field_0x1D0;
 		uint32_t field_0x1D4;
 		float step;
-		uint32_t clipIguess;
+		uint32_t blockAABB;
 		uint32_t field_0x1E0;
-		uint32_t field_0x1E4; // Random
+		struct Random* random; // Random
 		uint32_t field_0x1E8;
 		uint32_t field_0x1EC;
 		uint32_t field_0x1F0;

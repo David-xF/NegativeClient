@@ -51,6 +51,10 @@ Main.o: C:/Users/David/Documents/Workspace/NegativeClient/Main.cpp \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/entity/player/ServerPlayer.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/entity/AreaEffectCloud.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/entity/ItemEntity.h \
+ C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/entity/ItemFrame.h \
+ C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/entity/Painting.h \
+ C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/entity/SpectralArrow.h \
+ C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/entity/TippableArrow.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/item/BlockItem.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/item/Item.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/item/BowItem.h \
@@ -65,6 +69,7 @@ Main.o: C:/Users/David/Documents/Workspace/NegativeClient/Main.cpp \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/network/packet/clientbound/ClientboundChatPacket.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/network/packet/clientbound/ClientboundSoundPacket.h \
  c:\users\david\documents\workspace\negativeclient\include\minecraft\util\soundevent.h \
+ c:\users\david\documents\workspace\negativeclient\include\minecraft\util\soundsource.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/network/packet/serverbound/ServerboundContainerClickPacket.h \
  c:\users\david\documents\workspace\negativeclient\include\minecraft\util\clicktype.h \
  C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/network/packet/serverbound/ServerboundInteractPacket.h \
@@ -188,6 +193,10 @@ C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/entity/playe
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/entity/player/ServerPlayer.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/entity/AreaEffectCloud.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/entity/ItemEntity.h:
+C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/entity/ItemFrame.h:
+C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/entity/Painting.h:
+C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/entity/SpectralArrow.h:
+C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/entity/TippableArrow.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/item/BlockItem.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/item/Item.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/item/BowItem.h:
@@ -202,6 +211,7 @@ c:\users\david\documents\workspace\negativeclient\include\minecraft\network\pack
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/network/packet/clientbound/ClientboundChatPacket.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/network/packet/clientbound/ClientboundSoundPacket.h:
 c:\users\david\documents\workspace\negativeclient\include\minecraft\util\soundevent.h:
+c:\users\david\documents\workspace\negativeclient\include\minecraft\util\soundsource.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/network/packet/serverbound/ServerboundContainerClickPacket.h:
 c:\users\david\documents\workspace\negativeclient\include\minecraft\util\clicktype.h:
 C:/Users/David/Documents/Workspace/NegativeClient/include/minecraft/network/packet/serverbound/ServerboundInteractPacket.h:

@@ -54,54 +54,6 @@ void init() {
     memoryInitialize();
 }
 
-struct PlayData {
-    mc::SoundEvent* sound;
-    int count;
-    float whenToPlay;
-};
-
-bool hasStartedPlayer = false;
-int musicPlayer(void*) {
-    uint64_t firstTime = mc::System::processTimeInMilliSecs();
-    
-    PlayData playData[] = {
-        {mc::SoundEvent::block_note_guitar, 6,  0.0f},
-        {mc::SoundEvent::block_note_guitar, 8,  0.3f},
-        {mc::SoundEvent::block_note_guitar, 10, 0.6f},
-        {mc::SoundEvent::block_note_guitar, 6,  0.9f},
-        {mc::SoundEvent::block_note_guitar, 6,  1.2f},
-        {mc::SoundEvent::block_note_guitar, 8,  1.5f},
-        {mc::SoundEvent::block_note_guitar, 10, 1.8f},
-        {mc::SoundEvent::block_note_guitar, 6,  2.1f},
-        {mc::SoundEvent::block_note_guitar, 10, 2.4f},
-        {mc::SoundEvent::block_note_guitar, 11, 2.7f},
-        {mc::SoundEvent::block_note_guitar, 12, 3.0f},
-        {mc::SoundEvent::block_note_guitar, 13, 3.3f},
-        {mc::SoundEvent::block_note_guitar, 10, 3.6f},
-        {mc::SoundEvent::block_note_guitar, 11, 3.9f},
-        {mc::SoundEvent::block_note_guitar, 12, 4.2f},
-        {mc::SoundEvent::block_note_guitar, 13, 4.5f}
-    };
-    
-    int lastIndex = 0;
-
-    while (true) {
-        uint64_t currTime = mc::System::processTimeInMilliSecs();
-        float deltaTime = mc::toFloat(currTime - firstTime) / 1000.0f;
-    
-        if (playData[lastIndex].whenToPlay <= deltaTime) {
-            mc_printf(L"Playing Sound %d", lastIndex + 1);
-            mc::Minecraft::getInstance()->thePlayer->playSound(playData[lastIndex].sound, 1.0f, mc::SoundEvent::getPitch(playData[lastIndex].count));
-            lastIndex++;
-        } else if (lastIndex == (sizeof(playData) / sizeof(PlayData))) {
-            hasStartedPlayer = false;
-            return 0;
-        }
-    }
-
-    return 0;
-}
-
 DECL_FUNCTION(void, renderHitbox__22EntityRenderDispatcherFRQ2_5boost25shared_ptr__tm__8_6EntitydN22fT5i, void* renderer, const mc_boost::shared_ptr<mc::Entity>& ref, uint32_t unk, float x, float y, float z, float a, float b) {
     ESP::draw(renderer, ref, unk, x, y, z, a, b);
 }
@@ -272,11 +224,8 @@ DECL_FUNCTION(void, handleChat__28ServerGamePacketListenerImplFQ2_5boost42shared
     WorldChat::handleChat(listener, packet);
 }
 
-mc::C4JThreadImpl* musicPlayerThread = nullptr;
 int c_main(void*) {
     init();
-
-    hasStartedPlayer = false;
 
     Client* client = new Client(L"Negative");
     Module* CombatPage = new Module(L"Combat", Module::Type::PAGE);
@@ -385,7 +334,7 @@ int c_main(void*) {
     changeXUID->setEvents(nullptr, nullptr, [](Module* mod) {
         uint32_t part1 = code::Mem(0x104CCB18).as<uint32_t>();                     
         uint32_t part2 = code::Mem(part1 + 0x48).as<uint32_t>();
-        code::Mem(part2 + 0x2C).as<uint32_t>() = code::Random::next(0, 0x3FFFFFFF);;
+        code::Mem(part2 + 0x2C).as<uint32_t>() = code::Random::next(0, 0x3FFFFFFF);
     });
     PlayerPage->addModuleToVector(changeXUID);
 
@@ -423,18 +372,14 @@ int c_main(void*) {
         //_commands->openKeyboardMenu();
         mc::LocalPlayer* lPlayer = mc::Minecraft::getInstance()->thePlayer;
         for (mc_boost::shared_ptr<mc::Player>& player : lPlayer->lvl->players) {
-            lPlayer->listener->send(new mc::ClientboundSoundPacket(mc::SoundEvent::ear_rape, 7, player->position.x, player->position.y, player->position.z, 10.0f, 1.0f));
+            if (player.get() == lPlayer) {
+                lPlayer->playSound(mc::SoundEvent::ear_rape, 10.0f, 1.0f);
+            } else {
+                lPlayer->listener->send(new mc::ClientboundSoundPacket(mc::SoundEvent::ear_rape, mc::SoundSource::ESoundSource::player, player->position.x, player->position.y, player->position.z, 10.0f, 1.0f));
+            }
         }
 
         lPlayer->listener->send(code::Func<mc::Packet*, 0x028b2b8c, mc::Packet*, int>()(nullptr, 1));
-
-        if (!musicPlayerThread || !hasStartedPlayer) {
-            if (musicPlayerThread) _delete(musicPlayerThread);
-            hasStartedPlayer = true;
-            musicPlayerThread = new mc::C4JThreadImpl(musicPlayer, nullptr, "Music Player", 0x200);
-            musicPlayerThread->SetDeleteOnExit(true);
-            musicPlayerThread->Run();
-        }
     });
     MiscPage->addModuleToVector(testModule);
 

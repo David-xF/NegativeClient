@@ -185,7 +185,11 @@ public:
     static bool isBlackListed(uint64_t type) {
         uint64_t blackList[] = {
             mc::ItemEntity::GetType(),
-            mc::AreaEffectCloud::GetType()
+            mc::AreaEffectCloud::GetType(),
+            mc::ItemFrame::GetType(),
+            mc::Painting::GetType(),
+            mc::TippableArrow::GetType(),
+            mc::SpectralArrow::GetType()
         };
 
         for (uint64_t t : blackList) {

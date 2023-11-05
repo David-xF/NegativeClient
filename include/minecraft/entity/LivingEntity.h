@@ -122,7 +122,7 @@ namespace mc {
 		uint32_t field_0x498;
 		uint32_t field_0x49C;
 		uint32_t field_0x4A0;
-		uint32_t field_0x4A4;
+		uint32_t jumping;
 		uint32_t field_0x4A8;
 		uint32_t field_0x4AC;
 		uint32_t field_0x4B0;

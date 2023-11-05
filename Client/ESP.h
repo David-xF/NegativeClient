@@ -75,9 +75,12 @@ public:
         if (staticESP->playerColor() && player) color = (staticESP->getColor() & 0xFF000000) | color;
         
         // My Hitbox
+        float yO = 0.0f;
+        if (ref->type() == mc::ItemFrame::GetType()) yO = 0.37f;
+        if (ref->type() == mc::Painting::GetType()) yO = sY / 2.0f;
         xf::GUI::DrawHelper::DisplayBox3D(
-            x - sX,  y, z - sZ,
-            sX * 2, sY, sZ * 2,
+            x - sX,  y - yO, z - sZ,
+            sX * 2, sY,     sZ * 2,
             color & 0xFFFFFF, (color & 0xFF000000) >> 24
         );
 
@@ -89,7 +92,7 @@ public:
             builder->begin(MC_GL_LINES);
             builder->color(0, 0xFF);
             builder->vertex(0, 0, 0);
-            builder->vertex(x, y, z);
+            builder->vertex(x, y - yO, z);
             builder->end();
             mc::GlStateManager::popMatrix();
         }
