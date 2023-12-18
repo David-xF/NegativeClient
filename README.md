@@ -1,6 +1,9 @@
 # NegativeClient
 You can also Join this [Discord Server](https://discord.com/invite/xumaYBBhJv).
 
+# Note
+Unfinished and won't be updated anymore.
+
 # Credits
 Creator: [`david.xf`](https://github.com/David-xF)
 
